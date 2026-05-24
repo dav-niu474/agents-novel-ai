@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "memory",
+  "asset_id": "pending-hooks",
+  "last_settled_chapter": 5,
+  "version": 5,
+  "created_at": "2026-05-24T10:30:00Z",
+  "updated_at": "2026-05-24T16:30:00Z",
+  "data": {
+    "hooks": [
+      {
+        "id": "hook-canjuan-glow",
+        "title": "玉简发烫之谜",
+        "planted_chapter": 1,
+        "last_advanced_chapter": 5,
+        "status": "progressing",
+        "tier": "long",
+        "promise_to_reader": "卷 5 末段揭示前置线索",
+        "stale_warning_threshold": 30
+      },
+      {
+        "id": "hook-su-wanrou-emotion",
+        "title": "苏婉柔的微妙情绪",
+        "planted_chapter": 1,
+        "last_advanced_chapter": 5,
+        "status": "progressing",
+        "tier": "mid",
+        "promise_to_reader": "卷 2 中揭示母亲身份"
+      },
+      {
+        "id": "hook-canjuan-origin",
+        "title": "残卷的真正主人",
+        "planted_chapter": 1,
+        "last_advanced_chapter": 2,
+        "status": "open",
+        "tier": "long",
+        "promise_to_reader": "卷 5 末揭示线索 / 卷 7 全揭示"
+      },
+      {
+        "id": "hook-shitai-true-rank",
+        "title": "玉清师太的真实境界 / 身份",
+        "planted_chapter": 3,
+        "last_advanced_chapter": 5,
+        "status": "open",
+        "tier": "mid",
+        "promise_to_reader": "卷 4 揭示长老级身份"
+      },
+      {
+        "id": "hook-zongmen-clean-team-2",
+        "title": "清扫组之外的清扫组",
+        "planted_chapter": 3,
+        "last_advanced_chapter": 3,
+        "status": "open",
+        "tier": "mid"
+      },
+      {
+        "id": "hook-zhang-elder-mention",
+        "title": "张三长老（被提及）",
+        "planted_chapter": 4,
+        "last_advanced_chapter": 4,
+        "status": "open",
+        "tier": "mid",
+        "promise_to_reader": "第 15 章首次正式出场"
+      },
+      {
+        "id": "hook-zhao-tianxiao-conspiracy",
+        "title": "赵天霄背后是张三长老",
+        "planted_chapter": 4,
+        "last_advanced_chapter": 5,
+        "status": "progressing",
+        "tier": "short",
+        "promise_to_reader": "第 22 章揭露"
+      },
+      {
+        "id": "hook-chen-yaoshui-anomaly",
+        "title": "陈药水其实不是陈药水",
+        "planted_chapter": 4,
+        "last_advanced_chapter": 4,
+        "status": "open",
+        "tier": "short",
+        "promise_to_reader": "第 6-8 章揭示师太用意"
+      },
+      {
+        "id": "hook-canjuan-active-burn",
+        "title": "残卷主动消耗精神力时持续发烫",
+        "planted_chapter": 5,
+        "last_advanced_chapter": 5,
+        "status": "open",
+        "tier": "short",
+        "promise_to_reader": "第 6-8 章规律完整确认"
+      }
+    ],
+    "resolved": [
+      {
+        "id": "hook-zhao-tianxiao-bullying",
+        "title": "被赵天霄欺凌（小怪）",
+        "planted_chapter": 1,
+        "resolved_chapter": 5,
+        "tier": "short",
+        "resolution": "演武场反杀；赵重伤撤入医庐"
+      }
+    ]
+  }
+}

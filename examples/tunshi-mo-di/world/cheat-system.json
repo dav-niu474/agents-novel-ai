@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "cheat-system",
+  "asset_id": "cheat-tiangong-canjuan",
+  "created_at": "2026-05-02T13:00:00Z",
+  "updated_at": "2026-05-02T17:30:00Z",
+  "version": 3,
+  "data": {
+    "name": "天工残卷",
+    "type": "analyzer",
+
+    "definition": "可解析任何亲自接触过的功法 / 法宝 / 灵植 / 气息，输出原理 + 缺陷 + 优化方向三层文字。",
+
+    "trigger": ["physical-contact", "mental-focus", "consume-resource"],
+
+    "cost": {
+      "primary": "spiritual-power",
+      "scaling": "complexity-tiered"
+    },
+
+    "output_format": "三层文字浮现脑海：原理 → 缺陷 → 优化方向（Tier 1 只前两层）",
+
+    "stages": [
+      {
+        "tier": 1,
+        "chapter_range": [1, 30],
+        "cap": "炼气-筑基初期功法 / 普通灵物 / 同阶法宝（仅前两层信息）",
+        "unlock_condition": "natural",
+        "cost_multiplier": 1,
+        "modes": []
+      },
+      {
+        "tier": 2,
+        "chapter_range": [30, 100],
+        "cap": "金丹功法 / 上古下品法宝 / 全部三层信息",
+        "unlock_condition": "主角达筑基初期 + 一阶封印自然解开",
+        "cost_multiplier": 3,
+        "modes": ["full-three-layer"]
+      },
+      {
+        "tier": 3,
+        "chapter_range": [100, 300],
+        "cap": "元婴功法 / 上古中品法宝 / 上古残卷",
+        "unlock_condition": "主角金丹中期 + 二阶封印（外部触发）",
+        "cost_multiplier": 10,
+        "modes": ["analyze-shennshi-fragment"]
+      },
+      {
+        "tier": 4,
+        "chapter_range": [300, null],
+        "cap": "可主动改写 / 创造功法",
+        "unlock_condition": "主角元婴后期 + 三阶封印（最后一段）",
+        "cost_multiplier": 0,
+        "alt_cost": "memory",
+        "modes": ["rewrite", "create"]
+      }
+    ],
+
+    "limits": [
+      {
+        "category": "resource",
+        "rule": "高频解析消耗精神力，过量使用会昏迷",
+        "tier1_daily_cap": 5
+      },
+      {
+        "category": "backlash",
+        "rule": "解析血脉禁制 / 心魔功法 / 圣体本源会被反向解析",
+        "severity": "失忆 3 天 → 神识受创"
+      },
+      {
+        "category": "cooldown",
+        "rule": "同一目标 24 小时内只能解析一次",
+        "duration_hours": 24
+      },
+      {
+        "category": "target",
+        "rule": "不能解析自己的金手指；不能解析比自己高 2 阶以上的主动御出的功法（必须接触到其物本身）"
+      }
+    ],
+
+    "beats": [
+      {"chapter": 1, "type": "first-use", "event": "解析野生灵草·百年缚地芸（被动接触）"},
+      {"chapter": 2, "type": "windfall", "event": "解析灵草后发现可抑制师兄束气咒"},
+      {"chapter": 5, "type": "comeback", "event": "解析赤焰拳七寸反杀赵天霄"},
+      {"chapter": 15, "type": "comeback", "event": "解析张三长老心魔功法绝境翻盘"},
+      {"chapter": 25, "type": "backlash", "event": "因为想解析师太功法（超阶）反噬失忆 3 天"},
+      {"chapter": 30, "type": "windfall", "event": "残卷浮现宗门后山秘境入口信息"},
+      {"chapter": 50, "type": "stage-up", "event": "Tier 1 → Tier 2，一阶封印自然解开"},
+      {"chapter": 200, "type": "stage-up", "event": "Tier 2 → Tier 3，二阶封印外部触发"},
+      {"chapter": 500, "type": "transcend", "event": "残卷露出第二段封印真容（暗示与上古失败者相关）"},
+      {"chapter": 720, "type": "transcend", "event": "Tier 4 + 记忆代价模式，残卷倒计时消失"}
+    ],
+
+    "anti_patterns": [
+      "主角随意解析任何东西不付代价",
+      "Tier 1 解析金丹功法（必须超阶反噬）",
+      "解析结果三层文字一次出全",
+      "同一目标 24 小时内连续解析不冷却",
+      "不需要亲自接触就发动解析",
+      "主角解析自己的金手指"
+    ],
+
+    "not_applicable": false
+  }
+}

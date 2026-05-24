@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "memory",
+  "asset_id": "emotional-arcs",
+  "last_settled_chapter": 5,
+  "version": 5,
+  "created_at": "2026-05-24T10:30:00Z",
+  "updated_at": "2026-05-24T16:30:00Z",
+  "data": {
+    "arcs": [
+      {
+        "character_id": "protagonist-lin-jin",
+        "trajectory": [
+          {"chapter": 1, "state": "压抑/麻木", "trigger": "被欺凌"},
+          {"chapter": 1, "state": "微光/谨慎兴奋", "trigger": "解析灵草成功"},
+          {"chapter": 2, "state": "锋利/隐忍", "trigger": "决定动手反杀（饭堂目睹罚跪后忍住）"},
+          {"chapter": 3, "state": "沉重/被评估", "trigger": "意识到师太在评估自己"},
+          {"chapter": 4, "state": "锋利", "trigger": "钓出张三长老名字"},
+          {"chapter": 4, "state": "怔/温暖", "trigger": "苏婉柔送灵草"},
+          {"chapter": 5, "state": "决绝/锋", "trigger": "一击命中赵天霄"},
+          {"chapter": 5, "state": "倦/锋", "trigger": "章末喘气"}
+        ],
+        "current_state": "倦/锋"
+      },
+      {
+        "character_id": "antagonist-zhao-tianxiao",
+        "trajectory": [
+          {"chapter": 1, "state": "傲慢/膨胀", "trigger": "欺凌林烬抢月例"},
+          {"chapter": 4, "state": "试探/警觉", "trigger": "发现林烬变了"},
+          {"chapter": 5, "state": "震惊/恐惧", "trigger": "被反杀"}
+        ],
+        "current_state": "震惊/恐惧"
+      },
+      {
+        "character_id": "supporting-su-wanrou",
+        "trajectory": [
+          {"chapter": 1, "state": "无声怜悯", "trigger": "看到林烬被罚"},
+          {"chapter": 4, "state": "微露关切", "trigger": "送金创灵草"},
+          {"chapter": 5, "state": "暗喜/半笑", "trigger": "演武场远望林烬反杀"}
+        ],
+        "current_state": "暗喜/半笑"
+      },
+      {
+        "character_id": "supporting-shitai-yu-qing",
+        "trajectory": [
+          {"chapter": 3, "state": "试探/沉静", "trigger": "断扫帚 + 三句问"},
+          {"chapter": 4, "state": "沉静/计算", "trigger": "派陈药水（实非陈药水）做诱饵"},
+          {"chapter": 5, "state": "沉静/认可", "trigger": "演武场远望反杀，没干预"}
+        ],
+        "current_state": "沉静/认可"
+      }
+    ]
+  }
+}

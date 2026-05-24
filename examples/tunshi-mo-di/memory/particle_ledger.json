@@ -1,0 +1,127 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "memory",
+  "asset_id": "particle-ledger",
+  "last_settled_chapter": 5,
+  "version": 5,
+  "created_at": "2026-05-24T10:30:00Z",
+  "updated_at": "2026-05-24T16:30:00Z",
+  "data": {
+    "items": [
+      {
+        "id": "item-tiangong-canjuan",
+        "name": "天工残卷",
+        "owner": "protagonist-lin-jin",
+        "state": "贴身藏匿",
+        "first_appear_chapter": 1,
+        "last_used_chapter": 5,
+        "use_count": 4
+      },
+      {
+        "id": "item-yuepei-stolen",
+        "name": "月例(七两)",
+        "owner": "antagonist-zhao-tianxiao",
+        "state": "被抢走，未归还（章 1）；章 5 反杀后赵天霄无暇归还，仍未归还",
+        "first_appear_chapter": 1
+      },
+      {
+        "id": "item-fudibei-x2",
+        "name": "百年缚地芸×2(鞋底)",
+        "owner": "protagonist-lin-jin",
+        "state": "鞋底藏匿，第 5 章消耗 1 根（束气咒断时用）",
+        "first_appear_chapter": 2,
+        "last_used_chapter": 5,
+        "use_count": 1
+      },
+      {
+        "id": "item-saozhou-old",
+        "name": "旧扫帚",
+        "owner": "qingyun-outer-clean",
+        "state": "断（被师太试探踩断）",
+        "first_appear_chapter": 1,
+        "last_used_chapter": 3
+      },
+      {
+        "id": "item-saozhou-new",
+        "name": "新扫帚（师太给的，柄稍粗）",
+        "owner": "protagonist-lin-jin",
+        "state": "随身",
+        "first_appear_chapter": 3
+      },
+      {
+        "id": "item-su-jincao",
+        "name": "苏婉柔的金创灵草",
+        "owner": "protagonist-lin-jin",
+        "state": "随身",
+        "first_appear_chapter": 4
+      },
+      {
+        "id": "item-chenyaoshui",
+        "name": "陈药水（实非陈药水）",
+        "owner": "protagonist-lin-jin",
+        "state": "桌上",
+        "first_appear_chapter": 4
+      },
+      {
+        "id": "item-tongqian",
+        "name": "铜签",
+        "owner": "protagonist-lin-jin",
+        "state": "桌上（陈药水之上，待交回师太）",
+        "first_appear_chapter": 4
+      },
+      {
+        "id": "item-zizhitiezhen",
+        "name": "自制铁针",
+        "owner": "protagonist-lin-jin",
+        "state": "刺中赵天霄后取回，随身",
+        "first_appear_chapter": 5,
+        "use_count": 1
+      },
+      {
+        "id": "item-yuepei-paper",
+        "name": "穿越前的纸",
+        "owner": "protagonist-lin-jin",
+        "state": "贴身藏匿（与残卷一起）",
+        "first_appear_chapter": 1
+      }
+    ],
+    "currencies": [
+      {"id": "spirit-stone", "owner": "protagonist-lin-jin", "amount": 0, "currency": "下品灵石"}
+    ],
+    "consumables": [],
+    "cheat_consumption": [
+      {
+        "chapter": 1,
+        "operation": "解析野生灵草·百年缚地芸（被动接触：伤口血触玉简）",
+        "type": "passive",
+        "spirit_power_cost": 5,
+        "outcome": "成功（前两层信息：原理 + 缺陷）",
+        "side_effect": null
+      },
+      {
+        "chapter": 2,
+        "operation": "解析另一株百年缚地芸（缺陷层补充）",
+        "type": "active",
+        "spirit_power_cost": 5,
+        "outcome": "成功（缺陷层信息已得）",
+        "side_effect": null
+      },
+      {
+        "chapter": 5,
+        "operation": "解析赤焰拳",
+        "type": "active",
+        "spirit_power_cost": 15,
+        "outcome": "成功（原理+缺陷=七寸在左手腕骨突）",
+        "side_effect": "玉简持续发烫（约 20 秒，反派飞出后停）"
+      },
+      {
+        "chapter": 5,
+        "operation": "二次解析赤焰拳（24h 内冷却期）",
+        "type": "passive",
+        "spirit_power_cost": 0,
+        "outcome": "返回'已记'（无新信息，无消耗，玉简缓存机制确认）",
+        "side_effect": null
+      }
+    ]
+  }
+}

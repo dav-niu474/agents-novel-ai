@@ -1,0 +1,124 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "memory",
+  "asset_id": "chapter-summaries",
+  "last_settled_chapter": 5,
+  "version": 5,
+  "created_at": "2026-05-24T10:30:00Z",
+  "updated_at": "2026-05-24T16:30:00Z",
+  "data": {
+    "summaries": [
+      {
+        "chapter": 1,
+        "title": "残卷",
+        "summary_one_line": "林烬被赵天霄欺凌后捡到玉简，识出'天工'二字并解析野生灵草成功。",
+        "summary_3lines": [
+          "外门弟子林烬被赵天霄当众罚跪、抢走月例；苏婉柔路过停半秒。",
+          "黄昏取水山涧捡到玉简，玉简贴身后发烫，浮现'天工'二字。",
+          "夜里在西厢值守屋偷研，伤口血触发解析，确认这是可解析功法的能力。"
+        ],
+        "characters_present": ["protagonist-lin-jin", "antagonist-zhao-tianxiao", "supporting-su-wanrou"],
+        "locations": ["外门演武场", "山涧", "外门西厢值守屋"],
+        "key_events": [
+          {"type": "conflict", "desc": "被赵天霄欺凌罚跪"},
+          {"type": "discovery", "desc": "山涧捡到玉简"},
+          {"type": "ability-first-use", "desc": "解析野生灵草·百年缚地芸"}
+        ],
+        "hooks_opened": ["hook-canjuan-glow", "hook-su-wanrou-emotion", "hook-canjuan-origin", "hook-zhao-tianxiao-bullying"],
+        "hooks_advanced": [],
+        "hooks_resolved": [],
+        "word_count": 2757,
+        "audit_score": 87
+      },
+      {
+        "chapter": 2,
+        "title": "杂草·百年缚地芸",
+        "summary_one_line": "林烬药圃再次解析灵草，发现可抑制赵天霄束气咒；窗外苏婉柔来过。",
+        "summary_3lines": [
+          "早间药圃林烬再次解析'百年缚地芸'，得到'缺陷'层信息：与束气咒冲突。",
+          "中午饭堂目睹小弟子被束气咒罚跪，林烬隐忍未动手；下午借机摘三根灵草藏鞋底。",
+          "夜里发现窗外有人来过——鞋印形水印 + 缚地芸叶子上的指甲折痕，方向朝南（赵天霄院）。"
+        ],
+        "characters_present": ["protagonist-lin-jin", "supporting-su-wanrou", "antagonist-zhao-tianxiao"],
+        "locations": ["药圃", "饭堂", "外门西厢值守屋"],
+        "key_events": [
+          {"type": "ability-first-use", "desc": "解析另一株缚地芸得'缺陷'"},
+          {"type": "decision", "desc": "藏三根灵草做反杀工具"},
+          {"type": "encounter", "desc": "苏婉柔窗外来过（间接证据）"}
+        ],
+        "hooks_opened": [],
+        "hooks_advanced": ["hook-canjuan-glow", "hook-su-wanrou-emotion"],
+        "hooks_resolved": [],
+        "word_count": 2732,
+        "audit_score": 85
+      },
+      {
+        "chapter": 3,
+        "title": "扫地的师太",
+        "summary_one_line": "玉清师太借'断扫帚+三句问'试探林烬，林烬挡住关键问题但被师太看出不简单。",
+        "summary_3lines": [
+          "药圃，师太用青竹杖踩断林烬扫帚，断口角度暴露师太至少筑基期实力。",
+          "去库房路上师太问三句：月例、左眉疤、'清扫组之外'，林烬只答前两句。",
+          "师太屋内喝凉茶，林烬挡问；师太说'话没说完别走'让他下次再来。"
+        ],
+        "characters_present": ["protagonist-lin-jin", "supporting-shitai-yu-qing", "antagonist-zhao-tianxiao"],
+        "locations": ["外门药圃", "西厢库房", "师太屋"],
+        "key_events": [
+          {"type": "encounter", "desc": "师太首次正式对话"},
+          {"type": "revelation", "desc": "判定师太筑基期"},
+          {"type": "decision", "desc": "挡住第三个问题"}
+        ],
+        "hooks_opened": ["hook-shitai-true-rank", "hook-zongmen-clean-team-2"],
+        "hooks_advanced": [],
+        "hooks_resolved": [],
+        "word_count": 2537,
+        "audit_score": 84
+      },
+      {
+        "chapter": 4,
+        "title": "赵天霄的耳朵",
+        "summary_one_line": "赵天霄演武场后试探林烬，咂嘴口误说出'清扫组的张三长老'；苏婉柔药圃外第一次开口送金创灵草。",
+        "summary_3lines": [
+          "师太派林烬去清芜药房取陈药水，路过演武场赵天霄已等他。",
+          "赵天霄嘲讽试探，提到'张师叔考察外门'，反问下漏出'清扫组的张三长老'，咂嘴改话。",
+          "回程苏婉柔药圃外送一根金创灵草，只说两句'擦伤口用'和'走了'；林烬回屋发现陈药水不是陈药水。"
+        ],
+        "characters_present": ["protagonist-lin-jin", "antagonist-zhao-tianxiao", "supporting-su-wanrou"],
+        "locations": ["演武场后侧", "清芜药房", "药圃东沿井", "外门西厢"],
+        "key_events": [
+          {"type": "encounter", "desc": "赵天霄演武场试探"},
+          {"type": "revelation", "desc": "钓出张三长老名字"},
+          {"type": "encounter", "desc": "苏婉柔第一次开口"},
+          {"type": "discovery", "desc": "陈药水实非陈药水"}
+        ],
+        "hooks_opened": ["hook-zhang-elder-mention", "hook-zhao-tianxiao-conspiracy", "hook-chen-yaoshui-anomaly"],
+        "hooks_advanced": ["hook-canjuan-glow", "hook-su-wanrou-emotion"],
+        "hooks_resolved": [],
+        "word_count": 2718,
+        "audit_score": 84
+      },
+      {
+        "chapter": 5,
+        "title": "七寸断",
+        "summary_one_line": "林烬主动设局，鞋底缚地芸断束气咒、铁针刺穿赤焰拳七寸，当众反杀师兄赵天霄。",
+        "summary_3lines": [
+          "林烬主动找撕赵天霄，演武场鞋底缚地芸断束气咒，破第一招。",
+          "赵切赤焰拳，林烬咬舌渗血主动解析得'七寸在左手腕'，铁针一击穿筋脉。",
+          "赤焰拳回火反爆赵天霄胸口，飞撞砖墙吐血；师太远处路过看一眼，苏婉柔半笑。"
+        ],
+        "characters_present": ["protagonist-lin-jin", "antagonist-zhao-tianxiao", "supporting-su-wanrou", "supporting-shitai-yu-qing"],
+        "locations": ["外门演武场"],
+        "key_events": [
+          {"type": "ability-first-use", "desc": "主动解析赤焰拳"},
+          {"type": "conflict", "desc": "反杀赵天霄"},
+          {"type": "revelation", "desc": "玉简'已记'机制确认"}
+        ],
+        "hooks_opened": ["hook-canjuan-active-burn"],
+        "hooks_advanced": ["hook-canjuan-glow", "hook-su-wanrou-emotion", "hook-zhao-tianxiao-conspiracy"],
+        "hooks_resolved": ["hook-zhao-tianxiao-bullying"],
+        "word_count": 2334,
+        "audit_score": 89
+      }
+    ]
+  }
+}

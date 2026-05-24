@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "memory",
+  "asset_id": "subplot-board",
+  "last_settled_chapter": 5,
+  "version": 5,
+  "created_at": "2026-05-24T10:30:00Z",
+  "updated_at": "2026-05-24T16:30:00Z",
+  "data": {
+    "subplots": [
+      {
+        "id": "subplot-A-canjuan-origin",
+        "name": "A 线：残卷来源 / 觉醒",
+        "tier": "main",
+        "status": "active",
+        "current_phase": "金手指主动战斗显威",
+        "last_chapter_advance": 5,
+        "next_milestone_chapter": 50,
+        "stale_chapters": 0,
+        "stale_warning_threshold": 30
+      },
+      {
+        "id": "subplot-B-su-wanrou",
+        "name": "B 线：与苏婉柔的情感",
+        "tier": "second",
+        "status": "active",
+        "current_phase": "第一次主动注视",
+        "last_chapter_advance": 5,
+        "next_milestone_chapter": 33,
+        "stale_chapters": 0,
+        "stale_warning_threshold": 50
+      },
+      {
+        "id": "subplot-C-zongmen-power",
+        "name": "C 线：宗门权力斗争 + 张三长老阴谋",
+        "tier": "main",
+        "status": "active",
+        "current_phase": "外门震动 - 张三长老必有反应",
+        "last_chapter_advance": 5,
+        "next_milestone_chapter": 15,
+        "stale_chapters": 0,
+        "stale_warning_threshold": 30
+      }
+    ]
+  }
+}

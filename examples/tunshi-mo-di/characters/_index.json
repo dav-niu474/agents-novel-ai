@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "character-index",
+  "asset_id": "characters-index",
+  "created_at": "2026-05-03T10:00:00Z",
+  "updated_at": "2026-05-03T18:00:00Z",
+  "version": 3,
+  "data": {
+    "protagonist": [
+      {
+        "id": "protagonist-lin-jin",
+        "name": "林烬",
+        "file": "protagonist-lin-jin.md",
+        "first_appear_chapter": 1,
+        "tier": "protagonist"
+      }
+    ],
+    "antagonists": [
+      {
+        "id": "antagonist-zhao-tianxiao",
+        "name": "赵天霄",
+        "file": "antagonists/antagonist-zhao-tianxiao.md",
+        "first_appear_chapter": 1,
+        "tier": "early"
+      },
+      {
+        "id": "antagonist-elder-zhang",
+        "name": "张三长老",
+        "file": "antagonists/antagonist-elder-zhang.md",
+        "first_appear_chapter": 15,
+        "tier": "mid"
+      }
+    ],
+    "supporting": [
+      {
+        "id": "supporting-su-wanrou",
+        "name": "苏婉柔",
+        "file": "supporting/supporting-su-wanrou.md",
+        "first_appear_chapter": 1,
+        "tier": "core"
+      },
+      {
+        "id": "supporting-shitai-yu-qing",
+        "name": "玉清师太",
+        "file": "supporting/supporting-shitai-yu-qing.md",
+        "first_appear_chapter": 3,
+        "tier": "important"
+      }
+    ],
+    "minor": []
+  }
+}

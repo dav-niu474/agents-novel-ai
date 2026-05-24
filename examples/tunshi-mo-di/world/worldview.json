@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "worldview",
+  "asset_id": "worldview-main",
+  "created_at": "2026-05-02T10:00:00Z",
+  "updated_at": "2026-05-02T16:00:00Z",
+  "version": 2,
+  "data": {
+    "era": "末法纪元",
+    "year_anchor": 500,
+    "tagline": "末法纪元，灵气枯竭五百年，仙路断绝；但上古的力量正在悄悄回归。",
+
+    "timeline": [
+      {"epoch": "ancient", "name": "上古", "summary": "群仙时代（神话），灵气浓郁，飞天遁地者无算"},
+      {"epoch": "middle-ancient", "name": "中古", "summary": "诸天大战，群仙陨落，留下大量残卷与法宝"},
+      {"epoch": "remote", "name": "远古", "summary": "神魔大战（传说），神道崩裂，魔道兴起"},
+      {"epoch": "near", "name": "近古", "summary": "仙路断绝（500 年前），灵气骤减，宗门萎缩"},
+      {"epoch": "current", "name": "当代", "summary": "末法纪元 500 年（主角所在）"}
+    ],
+
+    "factions": [
+      {
+        "id": "qingyun",
+        "name": "青云宗",
+        "type": "sect",
+        "stance": "neutral",
+        "key_traits": ["剑修传承", "外门杂役为主", "灵气节流修法", "九大宗门之一", "内部分裂"]
+      },
+      {
+        "id": "xuanxiao",
+        "name": "玄霄宗",
+        "type": "sect",
+        "stance": "antagonist",
+        "key_traits": ["阴谋深远", "借刀杀人", "与青云宗百年宿仇", "九大宗门之一"]
+      },
+      {
+        "id": "danxia",
+        "name": "丹霞阁",
+        "type": "sect",
+        "stance": "neutral",
+        "key_traits": ["炼丹为主", "与各宗交易", "不掺合权斗"]
+      },
+      {
+        "id": "wuyao",
+        "name": "巫窑",
+        "type": "clan-cult",
+        "stance": "fringe",
+        "key_traits": ["上古失败者后裔", "藏于西北边荒", "秘术诡异"]
+      }
+    ],
+
+    "regions": [
+      {"id": "central", "name": "中州", "controlled_by": "九大宗门联盟"},
+      {"id": "qingyun-mountain", "name": "青云山", "controlled_by": "qingyun"},
+      {"id": "xuanxiao-peak", "name": "玄霄峰", "controlled_by": "xuanxiao"},
+      {"id": "northwest-wilds", "name": "西北边荒", "controlled_by": "wuyao（部分）"}
+    ],
+
+    "physical_rules": [
+      "灵气稀薄：当代日均吸纳量为上古的 1%",
+      "法宝退化：上古法宝几乎全失效，需血脉契合 + 灵气复活才能短暂重启",
+      "解析悖论：直接解析他人功法会反噬（金手指代价依据）",
+      "灵脉异常：中州残存几条伪灵脉，宗门城邦围绕其建立",
+      "修真分级稀疏：约 70% 修士卡炼气，化神当代是传说级"
+    ],
+
+    "info_boundaries": {
+      "protagonist_unknown": [
+        "末法的真正原因（卷 7 揭示）",
+        "残卷的真正主人（卷 5 末段揭示前置线索）",
+        "苏婉柔的母亲是宗门二长老（卷 2 中揭示）",
+        "张三长老是玄霄宗内应（第 15 章揭示）",
+        "残卷会任务完成消失（卷 12 揭示）"
+      ],
+      "protagonist_misknown": [
+        "以为残卷是青云宗祖师遗物（实则来自上古失败者）",
+        "以为玄霄宗只是一般敌对宗门（实则与末法成因有关）",
+        "以为玉清师太是普通外门管事（实则是宗门隐藏长老级人物）"
+      ]
+    }
+  }
+}
