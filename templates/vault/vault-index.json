@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "vault-index",
+  "asset_id": "vault-index",
+  "version": 0,
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "data": {
+    "cards": [
+      {
+        "id": "snip-<8位短码>",
+        "type": "snippet",
+        "file": "snippets/snip-<8位短码>.md",
+        "tags": ["<标签 1>", "<标签 2>"],
+        "summary": "<一句话总结>",
+        "source": "original",
+        "created_at": "<ISO>",
+        "use_count": 0,
+        "last_used_chapter": null,
+        "linked_books": []
+      },
+      {
+        "id": "insp-<8位短码>",
+        "type": "inspiration",
+        "file": "inspirations/insp-<8位短码>.md",
+        "tags": ["<标签 1>"],
+        "summary": "<一句话总结>",
+        "source": "original",
+        "created_at": "<ISO>",
+        "linked_books": []
+      },
+      {
+        "id": "ref-<8位短码>",
+        "type": "reference",
+        "file": "references/ref-<8位短码>.md",
+        "tags": ["<标签 1>"],
+        "summary": "<一句话总结>",
+        "source": "external",
+        "source_meta": {
+          "author": "<作者>",
+          "source_book": "<书名>",
+          "url": "<URL>"
+        },
+        "created_at": "<ISO>",
+        "linked_books": []
+      },
+      {
+        "id": "style-<slug>",
+        "type": "style-fingerprint",
+        "file": "style-fingerprints/style-<slug>.json",
+        "tags": ["<风格 tag 1>", "<风格 tag 2>"],
+        "summary": "<风格一句话>",
+        "created_at": "<ISO>",
+        "linked_books": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "memory",
+  "asset_id": "character-matrix",
+  "last_settled_chapter": 0,
+  "version": 0,
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "data": {
+    "encounters": [
+      {
+        "from": "<character-id>",
+        "to": "<character-id>",
+        "first_chapter": 1,
+        "last_chapter": 1,
+        "encounter_count": 1,
+        "relation_type": "enemy",
+        "_relation_type_options": [
+          "ally", "friend", "fond-of", "lover", "family",
+          "mentor-of", "student-of", "boss-of", "subordinate-of",
+          "neutral", "rival", "enemy", "manipulator-of",
+          "fearful-of", "indebted-to"
+        ],
+        "info_known": [
+          {"fact": "<例：对方欺凌自己>", "since_chapter": 1}
+        ],
+        "info_unknown": [
+          "<例：对方是玄霄宗内应>"
+        ]
+      }
+    ]
+  }
+}

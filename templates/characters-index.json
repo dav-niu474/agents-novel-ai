@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "character-index",
+  "asset_id": "characters-index",
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "version": 1,
+  "data": {
+    "protagonist": [
+      {
+        "id": "protagonist-<slug>",
+        "name": "<角色名>",
+        "file": "protagonist-<slug>.md",
+        "first_appear_chapter": 1,
+        "tier": "protagonist"
+      }
+    ],
+    "antagonists": [
+      {
+        "id": "antagonist-<slug>",
+        "name": "<角色名>",
+        "file": "antagonists/antagonist-<slug>.md",
+        "first_appear_chapter": 1,
+        "tier": "early",
+        "_tier_options": ["early", "mid", "late", "meta"]
+      }
+    ],
+    "supporting": [
+      {
+        "id": "supporting-<slug>",
+        "name": "<角色名>",
+        "file": "supporting/supporting-<slug>.md",
+        "first_appear_chapter": 1,
+        "tier": "core",
+        "_tier_options": ["core", "important", "minor"]
+      }
+    ],
+    "minor": []
+  }
+}

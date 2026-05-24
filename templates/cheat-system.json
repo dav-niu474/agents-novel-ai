@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "cheat-system",
+  "asset_id": "cheat-<slug>",
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "version": 1,
+  "data": {
+    "name": "<金手指名字>",
+    "type": "analyzer",
+    "_type_options": ["analyzer", "system", "simulator", "summoner", "copier", "evolver", "time", "hybrid"],
+
+    "definition": "<一句话定义>",
+
+    "trigger": ["physical-contact", "mental-focus"],
+    "_trigger_options": [
+      "physical-contact",
+      "visual-line-of-sight",
+      "voice-utterance",
+      "mental-focus",
+      "blood-ritual",
+      "consume-resource",
+      "time-based"
+    ],
+
+    "cost": {
+      "primary": "spiritual-power",
+      "scaling": "complexity-tiered",
+      "_primary_options": ["spiritual-power", "qi", "lifespan", "blood", "memory", "currency"]
+    },
+
+    "output_format": "<例：浮现脑海里的三层文字：原理 / 缺陷 / 优化方向>",
+
+    "stages": [
+      {
+        "tier": 1,
+        "chapter_range": [1, 30],
+        "cap": "<例：炼气-筑基功法>",
+        "unlock_condition": "natural",
+        "cost_multiplier": 1,
+        "modes": []
+      },
+      {
+        "tier": 2,
+        "chapter_range": [30, 100],
+        "cap": "<例：金丹功法>",
+        "unlock_condition": "<例：主角境界达筑基中期 / 残卷一阶封印解开>",
+        "cost_multiplier": 3,
+        "modes": []
+      },
+      {
+        "tier": 3,
+        "chapter_range": [100, 300],
+        "cap": "<例：元婴 / 上古残卷>",
+        "unlock_condition": "<例：某关键事件>",
+        "cost_multiplier": 10,
+        "modes": []
+      },
+      {
+        "tier": 4,
+        "chapter_range": [300, null],
+        "cap": "<例：可改写 / 创造>",
+        "unlock_condition": "<例：最终封印解开>",
+        "cost_multiplier": 0,
+        "alt_cost": "memory",
+        "modes": ["rewrite", "create"]
+      }
+    ],
+
+    "limits": [
+      {
+        "category": "resource",
+        "rule": "<例：高频解析会消耗精神力，过量会昏迷>"
+      },
+      {
+        "category": "backlash",
+        "rule": "<例：解析血脉禁制 / 心魔功法会被反向解析>"
+      },
+      {
+        "category": "cooldown",
+        "rule": "<例：同一目标 24 小时内只能解析一次>",
+        "duration_hours": 24
+      },
+      {
+        "category": "target",
+        "rule": "<例：不能解析自己的金手指>"
+      }
+    ],
+
+    "beats": [
+      {"chapter": 1, "type": "first-use", "event": "<第一次使用：例 解析野生灵草>"},
+      {"chapter": 5, "type": "comeback", "event": "<第一次反杀：例 解析师兄功法漏洞反杀>"},
+      {"chapter": 15, "type": "comeback", "event": "<绝境翻盘：例 解析长老心魔功法>"},
+      {"chapter": 25, "type": "backlash", "event": "<首次反噬：例 反噬昏迷 3 天>"},
+      {"chapter": 50, "type": "stage-up", "event": "<进入 Tier 2：例 残卷一阶封印解开>"},
+      {"chapter": 200, "type": "transcend", "event": "<超越限制：例 残卷露出第二段封印>"}
+    ],
+
+    "_beat_type_options": ["first-use", "windfall", "comeback", "cost-reveal", "stage-up", "backlash", "transcend"],
+
+    "anti_patterns": [
+      "主角随意解析任何东西不付代价",
+      "解析结果直接给出全部信息",
+      "出现矛盾的解析能力（境界不到却能解析高阶）"
+    ],
+
+    "not_applicable": false
+  }
+}

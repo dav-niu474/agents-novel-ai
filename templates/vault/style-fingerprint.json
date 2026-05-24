@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "style-fingerprint",
+  "asset_id": "style-<slug>",
+  "version": 1,
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "data": {
+    "name": "<例：天蚕土豆·斗破苍穹风>",
+    "genre": "<例：玄幻>",
+    "source_word_count": 0,
+    "source_meta": {
+      "author": "<作者>",
+      "source_book": "<书名>",
+      "url": "<URL，可选>"
+    },
+
+    "stats": {
+      "avg_sentence_length_zh": 18.3,
+      "sentence_length_distribution": {
+        "<10": 0.22,
+        "10-20": 0.45,
+        "20-40": 0.28,
+        ">40": 0.05
+      },
+      "dialogue_ratio": 0.42,
+      "paragraph_avg_lines": 2.7,
+      "paragraph_avg_chars": 65,
+      "first_person_intensity": 0.18,
+      "exclamation_per_1k": 1.2,
+      "ellipsis_per_1k": 0.8
+    },
+
+    "vocabulary": {
+      "high_freq": [
+        "<高频词 1>",
+        "<高频词 2>"
+      ],
+      "fatigue_zh": [
+        "<过度使用的副词，例：缓缓>",
+        "<例：竟然>"
+      ],
+      "mannerisms": [
+        "<习惯小动作 / 口头禅，例：摸了摸鼻子>",
+        "<例：嘴角扯出一丝弧度>"
+      ]
+    },
+
+    "patterns": {
+      "preferred_action_template": "<例：动作 + 拟声 + 结果>",
+      "preferred_dialogue_pacing": "<例：短句多、对话之间夹小动作>",
+      "avoid": [
+        "<例：大段心理独白>",
+        "<例：长形容词堆砌>"
+      ]
+    },
+
+    "samples": [
+      "samples/sample-001.md",
+      "samples/sample-002.md"
+    ],
+
+    "usage_notes": [
+      "<例：本指纹的 fatigue_zh 与 anti-ai-patterns 冲突，启用时建议保留我们的 anti-ai 词表覆盖>"
+    ]
+  }
+}

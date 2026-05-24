@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "memory",
+  "asset_id": "current-state",
+  "last_settled_chapter": 0,
+  "version": 0,
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "data": {
+    "characters": [
+      {
+        "id": "<character-id>",
+        "location": "<例：宗门后山·药圃>",
+        "stage": "<例：炼气七层>",
+        "status": "<例：健康 / 受伤 / 中毒 / 失忆 / 昏迷>",
+        "carrying": [
+          "<例：天工残卷(贴身)>",
+          "<例：玉佩(母亲遗物)>"
+        ],
+        "spirit_power_pct": 100,
+        "mood": "<例：警觉 / 沉重 / 平静>"
+      }
+    ],
+    "world_clock": {
+      "in_world_day": 1,
+      "season": "<暮春>",
+      "year_in_setting": 500
+    },
+    "active_factions": [
+      "<faction-id>"
+    ],
+    "known_to_protagonist": [
+      "<例：残卷可解析功法>"
+    ],
+    "unknown_to_protagonist": [
+      "<例：残卷的真正主人>",
+      "<例：末法的真因>"
+    ]
+  }
+}

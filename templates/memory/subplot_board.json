@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "memory",
+  "asset_id": "subplot-board",
+  "last_settled_chapter": 0,
+  "version": 0,
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "data": {
+    "subplots": [
+      {
+        "id": "subplot-A-<slug>",
+        "name": "<例：A 线：残卷来源>",
+        "tier": "main",
+        "_tier_options": ["main", "second", "third"],
+        "status": "active",
+        "_status_options": ["active", "dormant", "resolved", "abandoned"],
+        "current_phase": "<例：线索收集>",
+        "last_chapter_advance": 1,
+        "next_milestone_chapter": 50,
+        "stale_chapters": 0,
+        "stale_warning_threshold": 30
+      },
+      {
+        "id": "subplot-B-<slug>",
+        "name": "<例：B 线：与苏婉柔的情感>",
+        "tier": "second",
+        "status": "active",
+        "current_phase": "<例：好感累积>",
+        "last_chapter_advance": 1,
+        "next_milestone_chapter": null,
+        "stale_chapters": 0,
+        "stale_warning_threshold": 50
+      },
+      {
+        "id": "subplot-C-<slug>",
+        "name": "<例：C 线：宗门权力斗争>",
+        "tier": "third",
+        "status": "dormant",
+        "current_phase": "<例：暂时搁置>",
+        "last_chapter_advance": 1,
+        "next_milestone_chapter": null,
+        "stale_chapters": 0,
+        "stale_warning_threshold": 50
+      }
+    ]
+  }
+}

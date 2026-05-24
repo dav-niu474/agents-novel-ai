@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "worldview",
+  "asset_id": "worldview-main",
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "version": 1,
+  "data": {
+    "era": "<时代名，例：末法纪元>",
+    "year_anchor": 500,
+    "tagline": "<大背景一句话>",
+
+    "timeline": [
+      {"epoch": "ancient", "name": "<上古>", "summary": "<群仙时代（神话）>"},
+      {"epoch": "remote", "name": "<远古>", "summary": "<神魔大战（传说）>"},
+      {"epoch": "near", "name": "<近古>", "summary": "<仙路断绝（500 年前）>"},
+      {"epoch": "current", "name": "<当代>", "summary": "<末法纪元 500 年（主角所在）>"}
+    ],
+
+    "factions": [
+      {
+        "id": "<faction-id>",
+        "name": "<势力名>",
+        "type": "sect",
+        "stance": "ally",
+        "key_traits": ["<特色 1>", "<特色 2>", "<特色 3>"]
+      },
+      {
+        "id": "<faction-id>",
+        "name": "<势力名>",
+        "type": "sect",
+        "stance": "antagonist",
+        "key_traits": []
+      }
+    ],
+
+    "regions": [
+      {
+        "id": "<region-id>",
+        "name": "<地名>",
+        "controlled_by": "<faction-id 或 description>"
+      }
+    ],
+
+    "physical_rules": [
+      "<规则 1：例 灵气稀薄，日均吸纳量为上古 1%>",
+      "<规则 2：例 法宝退化，上古法宝几乎全失效>",
+      "<规则 3：例 解析悖论，直接解析他人功法会反噬>"
+    ],
+
+    "info_boundaries": {
+      "protagonist_unknown": [
+        "<主角不知道的事 1>",
+        "<主角不知道的事 2>"
+      ],
+      "protagonist_misknown": [
+        "<主角误解：例 以为残卷是宗门遗物（实则来自上古失败者）>"
+      ]
+    }
+  }
+}
