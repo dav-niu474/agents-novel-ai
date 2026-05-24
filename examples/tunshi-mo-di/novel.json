@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "project",
+  "id": "tunshi-mo-di-a3f9c2",
+  "title": "吞天魔帝",
+  "subtitle": "末法时代的最后一缕魔气",
+  "genre": ["xuanhuan", "moofa"],
+  "platform_target": ["qidian", "fanqie"],
+  "lang": "zh-CN",
+  "audience": "male-young-adult",
+
+  "blueprint_status": "approved",
+  "outline_status": "in_progress",
+  "current_chapter": 5,
+  "target_chapters": 800,
+  "target_chapter_words": 3500,
+  "current_total_words": 13078,
+
+  "tags": ["末法", "穿越", "解析流", "热血", "升级", "智斗"],
+  "core_pitch": "末法时代穿越者，靠一本残卷解析天地间所有功法，从废柴一步步成为吞天魔帝。",
+
+  "agents": {
+    "writer_voice": "热血少年向，多对话、爽点紧凑，但保留观察分析的智斗节奏",
+    "auditor_strictness": "high"
+  },
+
+  "created_at": "2026-05-01T00:00:00Z",
+  "updated_at": "2026-05-24T18:00:00Z",
+  "version": 12
+}

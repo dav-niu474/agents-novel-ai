@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "powers",
+  "asset_id": "powers-main",
+  "created_at": "2026-05-02T11:00:00Z",
+  "updated_at": "2026-05-02T11:30:00Z",
+  "version": 1,
+  "data": {
+    "system_name": "末法纪元修真体系",
+    "genre_basis": "xianxia-classic-simplified",
+    "stages": [
+      {
+        "id": "lianqi",
+        "name": "炼气",
+        "order": 1,
+        "sub_levels": ["一层", "二层", "三层", "四层", "五层", "六层", "七层", "八层", "九层"],
+        "core_features": ["灵气吸纳", "肉身强化", "简单灵术"],
+        "breakthrough_requires": ["灵气池满", "顿悟", "突破丹（外门常需）"],
+        "avg_breakthrough_years": 4,
+        "lifespan_bonus_years": 30,
+        "population_pct_among_cultivators": 80
+      },
+      {
+        "id": "zhuji",
+        "name": "筑基",
+        "order": 2,
+        "sub_levels": ["初期", "中期", "后期", "圆满"],
+        "core_features": ["凝聚法力", "气海", "可御物"],
+        "breakthrough_requires": ["筑基丹", "渡气海凝结劫"],
+        "avg_breakthrough_years": 15,
+        "lifespan_bonus_years": 80,
+        "population_pct_among_cultivators": 15
+      },
+      {
+        "id": "jindan",
+        "name": "金丹",
+        "order": 3,
+        "sub_levels": ["初期", "中期", "后期", "圆满", "大圆满"],
+        "core_features": ["法力凝丹", "御剑万里", "真正修士地位"],
+        "breakthrough_requires": ["感应天劫", "金丹真意"],
+        "avg_breakthrough_years": 75,
+        "lifespan_bonus_years": 200,
+        "population_pct_among_cultivators": 4
+      },
+      {
+        "id": "yuanying",
+        "name": "元婴",
+        "order": 4,
+        "sub_levels": ["初期", "中期", "后期", "圆满"],
+        "core_features": ["神识凝婴", "短距瞬移", "夺舍重生"],
+        "breakthrough_requires": ["渡九级天劫"],
+        "avg_breakthrough_years": 250,
+        "lifespan_bonus_years": 500,
+        "population_pct_among_cultivators": 0.9
+      },
+      {
+        "id": "huashen",
+        "name": "化神",
+        "order": 5,
+        "sub_levels": ["初期", "中期", "后期", "圆满"],
+        "core_features": ["魂体合一", "碎虚而行", "见过去未来一隅"],
+        "breakthrough_requires": ["直面末法本源试炼"],
+        "avg_breakthrough_years": 600,
+        "lifespan_bonus_years": 1500,
+        "population_pct_among_cultivators": 0.001
+      }
+    ],
+    "protagonist_curve": [
+      {"chapter": 1, "stage": "炼气一层", "context": "被欺凌；外门洒扫弟子"},
+      {"chapter": 5, "stage": "炼气一层（接近二层）", "context": "反杀师兄赵天霄；首次主动用残卷"},
+      {"chapter": 30, "stage": "炼气七层", "context": "解出师兄漏洞反杀"},
+      {"chapter": 50, "stage": "炼气九层 / 筑基初期", "context": "祭祀大典翻盘"},
+      {"chapter": 100, "stage": "筑基中期", "context": "脱离宗门"},
+      {"chapter": 200, "stage": "筑基后期", "context": "第 2 卷末"},
+      {"chapter": 300, "stage": "金丹", "context": "进入中州外"},
+      {"chapter": 500, "stage": "元婴", "context": "接近末法真相"},
+      {"chapter": 800, "stage": "化神", "context": "残卷消失，主角自立"}
+    ],
+    "info_boundaries": {
+      "hidden_stages": [
+        "化神之上是否还有更高境界（提示：逆天 / 证道两境）"
+      ],
+      "protagonist_unknown_until_chapter": [
+        {"fact": "化神不是终点", "until_chapter": 800},
+        {"fact": "末法本源试炼具体内容", "until_chapter": 500}
+      ]
+    },
+    "not_applicable": false
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "vault-index",
+  "asset_id": "vault-index",
+  "version": 4,
+  "created_at": "2026-05-24T17:30:00Z",
+  "updated_at": "2026-05-24T17:50:00Z",
+  "data": {
+    "cards": [
+      {
+        "id": "snip-3a91ef03",
+        "type": "snippet",
+        "file": "snippets/snip-3a91ef03.md",
+        "tags": ["打斗", "设局反杀", "解析流", "短句快剪", "comeback", "智斗"],
+        "summary": "解析流爽点的'看穿+设局'反杀范本——靠分析力赢，不靠等级",
+        "source": "original",
+        "created_at": "2026-05-24T17:30:00Z",
+        "use_count": 0,
+        "last_used_chapter": 5,
+        "linked_books": ["tunshi-mo-di-a3f9c2"]
+      },
+      {
+        "id": "snip-c4d8b2f1",
+        "type": "snippet",
+        "file": "snippets/snip-c4d8b2f1.md",
+        "tags": ["师徒", "试探", "对话", "断扫帚", "三句问", "智斗"],
+        "summary": "隐藏强者用'断物+三句问'试探年轻主角的范本对话",
+        "source": "original",
+        "created_at": "2026-05-24T17:35:00Z",
+        "use_count": 0,
+        "last_used_chapter": 3,
+        "linked_books": ["tunshi-mo-di-a3f9c2"]
+      },
+      {
+        "id": "snip-7b21c4e9",
+        "type": "snippet",
+        "file": "snippets/snip-7b21c4e9.md",
+        "tags": ["首屏", "开场", "被罚跪", "数砖块", "压抑", "起点首屏", "冲突进行时"],
+        "summary": "首屏前 200 字'被罚跪'开场 - 冲突进行时 + 数砖块 + 反派标志性动作",
+        "source": "original",
+        "created_at": "2026-05-24T17:40:00Z",
+        "use_count": 0,
+        "last_used_chapter": 1,
+        "linked_books": ["tunshi-mo-di-a3f9c2"]
+      },
+      {
+        "id": "insp-f3a92e1c",
+        "type": "inspiration",
+        "file": "inspirations/insp-f3a92e1c.md",
+        "tags": ["反派偷听", "侦察", "反侦察", "鞋印", "叶子折痕"],
+        "summary": "反派偷看主角的戏可用'鞋印形水印+叶子指甲折痕'暗示，不直接明说",
+        "source": "original",
+        "created_at": "2026-05-24T17:50:00Z",
+        "linked_books": ["tunshi-mo-di-a3f9c2"]
+      }
+    ]
+  }
+}
