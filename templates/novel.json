@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "project",
+  "id": "<slug>-<6位随机>",
+  "title": "<书名>",
+  "subtitle": "",
+  "genre": ["<主题材>", "<副题材，可选>"],
+  "platform_target": ["<平台 1>", "<平台 2，可选>"],
+  "lang": "zh-CN",
+  "audience": "<受众，例 male-young-adult / female-young-adult / mixed>",
+
+  "blueprint_status": "pending",
+  "outline_status": "pending",
+  "current_chapter": 0,
+  "target_chapters": null,
+  "target_chapter_words": 3500,
+  "current_total_words": 0,
+
+  "tags": ["<标签 1>", "<标签 2>"],
+  "core_pitch": "<一句话讲清楚这本书是什么>",
+
+  "agents": {
+    "writer_voice": "<对 writer 风格的指引，例：热血少年向，多对话、爽点紧凑>",
+    "auditor_strictness": "high"
+  },
+
+  "created_at": "<ISO 8601>",
+  "updated_at": "<ISO 8601>",
+  "version": 1
+}

@@ -736,24 +736,61 @@ maintained_by: novel-asset-vault
 
 ## 14. 模板（templates/）
 
-`templates/` 目录提供可复制的资产骨架，被各 skill 引用：
+`templates/` 目录提供可复制的资产骨架，被各 skill 引用。**v1.1 已全量就绪**（40 个文件 / 约 3000 行）。
 
 ```
 templates/
-├── novel.json                # #1 项目元数据骨架
-├── blueprint.md              # #2 蓝图骨架
-├── worldview.md              # #3 世界观骨架
-├── cheat-system.md           # #4 金手指骨架（含中文网文常见 7 大类）
-├── character.md              # #5 角色卡骨架
-├── outline-master.md         # #6.1 总纲骨架
-├── outline-volume.md         # #6.2 卷纲骨架
-├── outline-chapter.md        # #6.3 章纲骨架
-├── chapter.md                # #7 正文骨架
-├── memory-current-state.md   # #8 真相文件骨架样例
-└── vault-card.md             # #9 素材卡骨架
+├── README.md                            # 索引 + 通用约定 + ID 规则 + 使用顺序
+│
+│   ── 9 类一等公民资产 ──
+├── novel.json                           # #1 项目元数据
+├── blueprint.md                         # #2 开书蓝图（10 步）
+├── worldview.md + .json                 # #3 世界观（双轨 md + json）
+├── cheat-system.md + .json              # #4 金手指（六要素 + 7 大流派分类注释）
+├── powers.md + .json                    # #4 力量等级（11 种题材基底）
+├── character.md                         # #5 单个角色卡（8 字段，按 tier 不同密度）
+├── characters-relationships.md          # #5 关系网
+├── characters-index.json                # #5 角色索引
+├── outline-master.md                    # #6.1 总纲（5 幕 + 卷列表 + 长期伏笔 + 关键里程碑）
+├── outline-volume.md                    # #6.2 卷纲（5 段式 + 必出桥段对位三源）
+├── outline-chapter.md                   # #6.3 章纲（9 字段 + memory delta 列举）
+├── chapter.md                           # #7 正文骨架
+│
+│   ── 8 类长期记忆（双轨 json + md 投影）──
+├── memory/
+│   ├── README.md                        # 双轨制说明 + 9 大约束 C1-C9
+│   ├── current_state.{json,md}          # 当前状态
+│   ├── particle_ledger.{json,md}        # 物品 / 资源 / 金手指消耗
+│   ├── pending_hooks.{json,md}          # 未闭合伏笔（追读力债务）
+│   ├── chapter_summaries.{json,md}      # 章节摘要（不允许跳号）
+│   ├── subplot_board.{json,md}          # 支线进度板（A/B/C 线）
+│   ├── emotional_arcs.{json,md}         # 情感弧线
+│   └── character_matrix.{json,md}       # 角色交互矩阵 + info_known/unknown
+│
+│   ── 4 类素材卡 + 索引 ──
+├── vault/
+│   ├── README.md                        # vault 是全局共享资源
+│   ├── inspiration-card.md              # 灵感卡
+│   ├── snippet-card.md                  # 桥段卡（chapter-writer compose 注入）
+│   ├── reference-card.md                # 参考卡（fair use，不进 compose）
+│   ├── style-fingerprint.json           # 风格指纹
+│   └── vault-index.json                 # 总索引
+│
+│   ── 审计 / 雷达报告 ──
+└── audit/
+    ├── README.md                        # 评分公式 + 阈值
+    ├── chapter-audit-report.md          # 单章审稿（33 维度 + 11 AIGC 规则）
+    ├── full-book-audit.md               # 全书复盘
+    └── trend-report.md                  # 雷达 3 类报告（题材热度 / 竞品 / 空缺）
 ```
 
-> v1 第一版 skills 落地后会在第二轮迭代中补齐 templates 全部内容。第一版 skills 内嵌足够的骨架示例，开发者可以直接照抄。
+### 使用方式
+
+1. 复制对应模板到目标小说项目的对应路径（落点详见 `templates/README.md` 第 1 节索引表）
+2. 按 `<...>` 占位与 `<!-- ... -->` HTML 注释提示填写
+3. JSON 模板里的 `_xxx_options` 字段是**枚举可选值提示**，使用前删除（非合法 JSON 字段）
+
+模板与本节 schema 不一致时以本节为准，并以 PR 修正模板。
 
 ---
 

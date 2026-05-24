@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "powers",
+  "asset_id": "powers-main",
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "version": 1,
+  "data": {
+    "system_name": "<体系名，例：末法纪元修真体系>",
+    "genre_basis": "xianxia-classic-simplified",
+    "_genre_basis_options": [
+      "xuanhuan-custom",
+      "xianxia-classic",
+      "xianxia-classic-simplified",
+      "urban-tier",
+      "urban-faction",
+      "wuxia-traditional",
+      "scifi-tech-tier",
+      "scifi-civilization",
+      "apocalypse-evolution",
+      "game-leveled",
+      "romance-not-applicable"
+    ],
+
+    "stages": [
+      {
+        "id": "<stage-id>",
+        "name": "<境界名 1，例：炼气>",
+        "order": 1,
+        "sub_levels": ["一层", "二层", "三层", "四层", "五层", "六层", "七层", "八层", "九层"],
+        "core_features": ["<特征 1>", "<特征 2>"],
+        "breakthrough_requires": ["<条件 1>", "<条件 2>"],
+        "avg_breakthrough_years": 4,
+        "lifespan_bonus_years": 30,
+        "population_pct_among_cultivators": 80
+      },
+      {
+        "id": "<stage-id>",
+        "name": "<境界名 2，例：筑基>",
+        "order": 2,
+        "sub_levels": ["初期", "中期", "后期", "圆满"],
+        "core_features": ["<特征 1>"],
+        "breakthrough_requires": ["<条件 1>"],
+        "avg_breakthrough_years": 15,
+        "lifespan_bonus_years": 80,
+        "population_pct_among_cultivators": 15
+      }
+    ],
+
+    "protagonist_curve": [
+      {"chapter": 1, "stage": "<例：炼气一层>", "context": "<例：被欺凌>"},
+      {"chapter": 30, "stage": "<例：炼气七层>", "context": "<例：解出师兄漏洞反杀>"},
+      {"chapter": 50, "stage": "<例：炼气九层 / 筑基初期>", "context": "<例：祭祀大典翻盘>"},
+      {"chapter": 100, "stage": "<例：筑基中期>", "context": "<例：脱离宗门>"},
+      {"chapter": 300, "stage": "<例：金丹>", "context": "<例：进入中州外>"},
+      {"chapter": 500, "stage": "<例：元婴>", "context": "<例：接近真相>"},
+      {"chapter": 800, "stage": "<例：化神>", "context": "<例：残卷消失，主角自立>"}
+    ],
+
+    "info_boundaries": {
+      "hidden_stages": [
+        "<例：化神之上还有 \"逆天\" / \"证道\"两境>"
+      ],
+      "protagonist_unknown_until_chapter": [
+        {"fact": "<例：化神不是终点>", "until_chapter": 800}
+      ]
+    },
+
+    "not_applicable": false
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "memory",
+  "asset_id": "particle-ledger",
+  "last_settled_chapter": 0,
+  "version": 0,
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "data": {
+    "items": [
+      {
+        "id": "<item-id>",
+        "name": "<例：天工残卷>",
+        "owner": "<character-id>",
+        "state": "<例：贴身藏匿>",
+        "first_appear_chapter": 1,
+        "last_used_chapter": 0,
+        "use_count": 0
+      }
+    ],
+    "currencies": [
+      {
+        "id": "spirit-stone",
+        "owner": "<character-id>",
+        "amount": 0,
+        "currency": "<下品灵石>"
+      }
+    ],
+    "consumables": [
+      {
+        "id": "<consumable-id>",
+        "name": "<例：筑基丹>",
+        "owner": "<character-id>",
+        "amount": 0,
+        "max_seen": 0,
+        "last_used_chapter": 0
+      }
+    ],
+    "cheat_consumption": [
+      {
+        "chapter": 0,
+        "operation": "<例：解析野生灵草>",
+        "type": "active",
+        "_type_options": ["active", "passive"],
+        "spirit_power_cost": 0,
+        "outcome": "<例：成功 / 反噬 / 中断>",
+        "side_effect": null
+      }
+    ]
+  }
+}

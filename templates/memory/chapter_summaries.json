@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "memory",
+  "asset_id": "chapter-summaries",
+  "last_settled_chapter": 0,
+  "version": 0,
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "data": {
+    "summaries": [
+      {
+        "chapter": 1,
+        "title": "<章节标题>",
+        "summary_one_line": "<一句话摘要>",
+        "summary_3lines": [
+          "<事件 1 一句话>",
+          "<事件 2 一句话>",
+          "<事件 3 一句话>"
+        ],
+        "characters_present": [
+          "<character-id>",
+          "<character-id>"
+        ],
+        "locations": [
+          "<位置 1>",
+          "<位置 2>"
+        ],
+        "key_events": [
+          {"type": "conflict", "desc": "<例：被赵天霄欺凌>"},
+          {"type": "discovery", "desc": "<例：捡到天工残卷>"},
+          {"type": "ability-first-use", "desc": "<例：解析野生灵草>"}
+        ],
+        "_event_type_options": [
+          "conflict", "discovery", "decision", "revelation",
+          "betrayal", "rescue", "ability-first-use", "ability-stage-up",
+          "death", "reunion", "departure", "arrival", "training", "encounter"
+        ],
+        "hooks_opened": ["hook-<slug>"],
+        "hooks_advanced": [],
+        "hooks_resolved": [],
+        "word_count": 0,
+        "audit_score": null
+      }
+    ]
+  }
+}

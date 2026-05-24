@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "memory",
+  "asset_id": "emotional-arcs",
+  "last_settled_chapter": 0,
+  "version": 0,
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "data": {
+    "arcs": [
+      {
+        "character_id": "<character-id>",
+        "trajectory": [
+          {"chapter": 1, "state": "<例：压抑/麻木>", "trigger": "<例：被欺凌>"},
+          {"chapter": 1, "state": "<例：微光/谨慎兴奋>", "trigger": "<例：解析成功>"}
+        ],
+        "current_state": "<例：微光/谨慎兴奋>"
+      }
+    ]
+  }
+}
