@@ -375,9 +375,18 @@
 
 ### D29 段落 / 句长节奏
 
-**定义**：每段 2-4 句 / 单段 ≤ 120 字 / 句平均 < 25 字。
+**定义**：段落节奏按章纲第 5 字段 chapter_type 自适应（v1.3）。
+
+| chapter_type | 段落平均句数 | 单段最长字数 | 句平均字数 | 单句最长字数 |
+|-------------|------------|------------|-----------|------------|
+| dialogue-heavy | [2, 5] | ≤ 100 | < 22 | ≤ 35 |
+| description-heavy | [3, 5] | ≤ 130 | < 28 | ≤ 45 |
+| **mixed**（默认 / 章纲未填时） | [2, 4] | ≤ 120 | < 25 | ≤ 40 |
+| action-heavy | [1, 3] | ≤ 80 | < 20 | ≤ 32 |
 
 **严重度**：minor
+
+> **v1.3 实战教训**：v1.2《吞天魔帝》第 5 章动作章 audit 时段落平均句数 1.9 触发 D29 误报。修复后 action-heavy 章节段落允许 [1, 3]，第 5 章 1.9 处于范围内 ✓。
 
 ---
 
@@ -418,11 +427,35 @@
 
 ---
 
-### D33 字数 / 节奏在范围
+### D33 字数 / 节奏在范围（v1.3 严重度分级）
 
-**定义**：章纲第 7 字段字数 ±15%（软范围）。
+**定义**：
 
-**严重度**：minor（warn）/ major（超出 ±25% 硬范围）
+```
+target = 章纲 target_words（默认 3500）
+soft  = [target × 0.85, target × 1.15]   # 软范围
+hard  = [target × 0.75, target × 1.25]   # 硬范围
+```
+
+**严重度分级（v1.3）**：
+
+| 字数区间 | 评级 | 扣分 | 严重度 | frontmatter 标记 |
+|---------|------|------|-------|----------------|
+| 在 soft 内 | ✓ 通过 | 0 | — | — |
+| 在 hard 内但 soft 外 | ⚠️ length_warning | -3 | minor | length_warning: true |
+| 跌出 hard | 🚨 length_critical | -5 | major | length_warning: true + length_critical: true |
+| 远超 hard 上沿（> target × 1.5） | 🚨 length_critical (over) | -8 | major | length_warning: true + length_critical: true |
+
+**修订建议**：
+
+| 字数情况 | 推荐 chapter-writer revise mode |
+|---------|-----------------------------|
+| < target × 0.75 | **extend**（v1.3 新增）保留事件链插入感官段 |
+| 在 hard 但 < soft（短） | extend 或保留 warning 进 settle |
+| 在 hard 但 > soft（长） | polish 压缩 |
+| > target × 1.25 | rewrite 重写更紧凑 |
+
+> **v1.3 学习背景**：v1.2《吞天魔帝》5 章中第 1、2、4 章在硬内软外（length_warning -3），第 3、5 章跌出硬范围（length_critical -5）。整体平均评分从 91 → 86 反映了真实的字数偏短问题。
 
 ---
 
@@ -431,8 +464,8 @@
 | 严重度 | 数量 | 维度 |
 |-------|------|------|
 | critical | 6 | D1, D3, D6, D11, D13, D15, D17 + D32 (条件) |
-| major | 11 | D2, D4, D7, D8, D12, D14, D16, D18, D19, D20, D26 (条件), D30, D31 |
-| minor | 16 | D5, D9, D10, D21, D22, D23, D24, D25, D27, D28, D29, D33 |
+| major | 12 | D2, D4, D7, D8, D12, D14, D16, D18, D19, D20, D26 (条件), D30, D31, **D33 (length_critical 时)** |
+| minor | 15 | D5, D9, D10, D21, D22, D23, D24, D25, D27, D28, D29, **D33 (length_warning 时)** |
 
 ---
 

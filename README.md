@@ -40,6 +40,7 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │                       novel-studio (根 skill)                    │
 │   项目初始化 / 总导航 / 资产索引 / 跨 skill 编排                  │
+│   v1.3 起：进度跟踪（progress/ 子系统总维护者）                   │
 └──────┬──────────────────────────────────────────────────┬───────┘
        │                                                  │
        ▼                                                  ▼
@@ -55,15 +56,34 @@
 
 | Skill | 职能 | 触发场景 |
 |-------|------|---------|
-| `novel-studio` | 根 skill，初始化项目、导航、资产索引、跨 skill 编排 | "新建一本书 / 看看这个项目有什么 / 整体导出" |
+| `novel-studio` | 根 skill，初始化项目、导航、资产索引、跨 skill 编排，**v1.3 起兼任进度跟踪（timeline / milestones / velocity / decisions / lessons / todo / snapshots）** | "新建一本书 / 看看这个项目有什么 / 整体导出 / **进度 / 速度 / 待办 / 里程碑 / 周报 / 复盘**" |
 | `novel-blueprint` | 灵感 → 开书蓝图（题材 / 主角 / 金手指 / 卖点 / 前 30 章承诺） | "我有个想法 / 帮我开一本书 / 给我几个开书方向" |
 | `novel-market-radar` | 平台热榜分析、选题、爽点抽取 | "起点最近什么火 / 我应该写什么题材 / 看看竞品的卖点" |
 | `novel-worldforge` | 世界观 + 金手指（中文网文核心差异化资产） | "建世界 / 设计一个金手指 / 体系怎么搭" |
 | `novel-character-atelier` | 角色卡 + 人设（含主角、配角、反派、关系网） | "捏个主角 / 给我设计反派 / 这个 NPC 怎么写" |
-| `novel-outline-architect` | 总纲 / 卷纲 / 章纲（细纲）三级大纲、节奏与卡点设计 | "写大纲 / 写细纲 / 给我这一卷 30 章的章纲" |
-| `novel-chapter-writer` | 章节细纲 → 正文，含去 AI 味、首屏钩子、爽点节拍 | "写正文 / 写下一章 / 把这章写完" |
-| `novel-quality-auditor` | 33 维度连续性审稿、追读力检查、AIGC 检测 | "审一下这章 / 帮我检查前后矛盾 / 这章读起来怎么样" |
-| `novel-asset-vault` | 参考素材库 + 素材沉淀（金句、桥段、灵感卡） | "把这段话存下来 / 给我找类似的桥段 / 整理参考资料" |
+| `novel-outline-architect` | 总纲 / 卷纲 / 章纲（细纲）三级大纲、节奏与卡点设计；**v1.3 起强约束 events × per_event ≥ target × 0.85** | "写大纲 / 写细纲 / 给我这一卷 30 章的章纲" |
+| `novel-chapter-writer` | 章节细纲 → 正文，含去 AI 味、首屏钩子、爽点节拍；**v1.3 起新增 extend 修订模式 + 字数 pre-check** | "写正文 / 写下一章 / 把这章写完 / **扩写 / 加长**" |
+| `novel-quality-auditor` | 33 维度连续性审稿、追读力检查、AIGC 检测；**v1.3 起 D29 chapter_type 自适应 + D33 length warning 严重度分级** | "审一下这章 / 帮我检查前后矛盾 / 这章读起来怎么样" |
+| `novel-asset-vault` | 参考素材库 + 素材沉淀（金句、桥段、灵感卡）；**v1.3 起沉淀阈值 ≥ 85（从 ≥ 95 调整）** | "把这段话存下来 / 给我找类似的桥段 / 整理参考资料" |
+
+---
+
+## v1.3 新增：进度控制子系统（progress/）
+
+> 在 memory/ / vault/ / audit/ 之外，第 4 类项目级资产。**memory/ 管"故事还没忘"，progress/ 管"作者没忘自己写了什么"**。
+
+| 文件 | 用途 |
+|------|------|
+| `progress/timeline.{json,md}` | 全书事件流（append-only） |
+| `progress/milestones.{json,md}` | 里程碑（卷末 / 爽点 / 境界跃迁 等） |
+| `progress/velocity.{json,md}` | 速度指标（chapters/day、估算完结日期） |
+| `progress/decisions.md` | 决策日志（重要选择记录） |
+| `progress/lessons.md` | 经验沉淀（卷末复盘） |
+| `progress/todo.md` | 待办清单（聚合 hooks 债务 / 章纲待写 / 修订待跑） |
+| `progress/logs/<date>.jsonl` | 每日执行日志（各 skill 必写） |
+| `progress/snapshots/snapshot-*.md` | 周末 / 卷末快照 |
+
+由 `novel-studio` 总维护，所有 skill 必须 append timeline + log。详见 [`docs/design/05-progress-tracking.md`](./docs/design/05-progress-tracking.md)。
 
 ---
 
@@ -78,26 +98,34 @@ agents-novel-ai/
 │   │   ├── 01-asset-model.md          # 9 类资产 schema
 │   │   ├── 02-pipeline-architecture.md# 多 Agent 流水线
 │   │   ├── 03-memory-and-vault.md     # 长期记忆与素材沉淀
-│   │   └── 04-skill-spec.md           # Skill 规范
-│   └── roadmap.md                     # v1 → v2 → v3 演进
-├── skills/                            # ← 第一版交付物
-│   ├── novel-studio/SKILL.md
+│   │   ├── 04-skill-spec.md           # Skill 规范
+│   │   └── 05-progress-tracking.md    # v1.3：长文写作进度控制
+│   └── roadmap.md                     # v1 → v1.3 → v2 → v3 演进
+├── skills/                            # 9 个 skill SKILL.md
+│   ├── novel-studio/SKILL.md          # v0.1.3 加进度跟踪工作流 F
 │   ├── novel-blueprint/SKILL.md
 │   ├── novel-market-radar/SKILL.md
 │   ├── novel-worldforge/SKILL.md
 │   ├── novel-character-atelier/SKILL.md
-│   ├── novel-outline-architect/SKILL.md
-│   ├── novel-chapter-writer/SKILL.md
-│   ├── novel-quality-auditor/SKILL.md
-│   └── novel-asset-vault/SKILL.md
-└── templates/                         # 资产模板（被 skills 引用）
-    ├── outline.md
-    ├── volume-outline.md
-    ├── chapter-outline.md
-    ├── character.md
-    ├── worldview.md
-    ├── cheat-system.md
-    └── reference-card.md
+│   ├── novel-outline-architect/SKILL.md  # v1.3 R8 字数估算约束
+│   ├── novel-chapter-writer/SKILL.md     # v1.3 加 extend mode
+│   ├── novel-quality-auditor/SKILL.md    # v1.3 D29/D33 自适应
+│   └── novel-asset-vault/SKILL.md        # v1.3 沉淀阈值 ≥ 85
+├── templates/                         # 资产模板
+│   ├── novel.json
+│   ├── blueprint.md
+│   ├── worldview.{md,json}
+│   ├── cheat-system.{md,json}
+│   ├── powers.{md,json}
+│   ├── character.md / characters-relationships.md / characters-index.json
+│   ├── outline-{master,volume,chapter}.md
+│   ├── chapter.md
+│   ├── memory/                        # 7 类真相文件双轨
+│   ├── vault/                         # 4 类素材卡 + index
+│   ├── audit/                         # 3 类报告
+│   └── progress/                      # v1.3：8 文件 + logs/ + snapshots/
+└── examples/
+    └── tunshi-mo-di/                  # v1.2 实战 + v1.3 progress 回填
 ```
 
 每个 skill 是一个独立目录，遵循 Anthropic SKILL.md 规范（YAML frontmatter + Markdown 正文）。可以单独装载，也可以由 `novel-studio` 统一编排。
@@ -146,12 +174,21 @@ my-novel/
 │   ├── snippets/                      # 桥段 / 金句
 │   ├── references/                    # 参考作品片段
 │   └── index.json                     # 素材索引（标签 + 摘要）
-└── audit/
-    ├── reports/                       # 审稿报告
-    └── trends/                        # 雷达扫描结果
+├── audit/
+│   ├── reports/                       # 审稿报告
+│   └── trends/                        # 雷达扫描结果
+└── progress/                          # ← v1.3 新增：作者侧进度元数据
+    ├── timeline.{json,md}             # 全书事件流（append-only）
+    ├── milestones.{json,md}           # 里程碑（已达成 / 待达成）
+    ├── velocity.{json,md}             # 速度指标
+    ├── decisions.md                   # 决策日志
+    ├── lessons.md                     # 经验沉淀
+    ├── todo.md                        # 待办清单
+    ├── logs/                          # 每日 jsonl 执行日志
+    └── snapshots/                     # 周末 / 卷末快照
 ```
 
-资产模型详见 `docs/design/01-asset-model.md`。
+资产模型详见 [`docs/design/01-asset-model.md`](./docs/design/01-asset-model.md)；进度子系统详见 [`docs/design/05-progress-tracking.md`](./docs/design/05-progress-tracking.md)。
 
 ---
 

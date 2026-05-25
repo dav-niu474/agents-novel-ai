@@ -133,8 +133,19 @@ soft_depends_on:
 | 25 | 高频禁用词命中数 | 每章 ≤ 2 次 |
 | 26 | 禁用句式命中数 | 0 次 |
 | 27 | 必备元素 | ≥ 1 项 |
-| 28 | 对话占比 | 30-45%（章纲允许时可放宽） |
-| 29 | 段落 / 句长节奏 | 每段 2-4 句 / 单段 ≤ 120 字 / 句平均 < 25 字 |
+| 28 | 对话占比 | 章纲第 7 字段允许范围（按 chapter_type 自适应） |
+| 29 | 段落 / 句长节奏 | **按章纲第 5 字段 chapter_type 自适应（v1.3）** |
+
+#### D29 chapter_type 自适应表（v1.3 新增）
+
+| chapter_type | 段落平均句数 | 单段最长字数 | 句平均字数 | 单句最长字数 |
+|-------------|------------|------------|-----------|------------|
+| dialogue-heavy | [2, 5] | ≤ 100 | < 22 | ≤ 35 |
+| description-heavy | [3, 5] | ≤ 130 | < 28 | ≤ 45 |
+| **mixed**（默认） | [2, 4] | ≤ 120 | < 25 | ≤ 40 |
+| action-heavy | [1, 3] | ≤ 80 | < 20 | ≤ 32 |
+
+> **v1.3 学习背景**：v1.2《吞天魔帝》第 5 章动作章 audit 时段落平均句数 1.9 触发 D29 误报，但其实是动作章正常节奏。修复策略是 D29 按 chapter_type 自适应。章纲若未填 chapter_type，默认按 mixed 校验。
 
 ### 3.5 类 5：大纲遵从（4 维）
 
@@ -145,7 +156,23 @@ soft_depends_on:
 | 30 | 必出场角色全部出现 | 章纲第 2 字段 |
 | 31 | 必发生事件全部命中 | 章纲第 3 字段（顺序可允许微调） |
 | 32 | 不写禁忌全部规避 | 章纲第 8 字段 |
-| 33 | 字数 / 节奏在范围 | 章纲第 7 字段 |
+| 33 | 字数 / 节奏在范围 | **按 length warning / critical 严重度分级（v1.3）** |
+
+#### D33 严重度分级评分（v1.3 强化）
+
+```
+target = 章纲 target_words（默认 3500）
+soft  = [target × 0.85, target × 1.15]   # 软范围
+hard  = [target × 0.75, target × 1.25]   # 硬范围
+
+if actual in soft:
+    pass，✓
+elif actual in hard but not soft:
+    length_warning，扣 -3，章节 frontmatter 加 length_warning: true
+elif actual not in hard:
+    length_critical，扣 -5，章节 frontmatter 加 length_warning: true + length_critical: true
+    建议 chapter-writer 走 extend mode（< 0.75）或 polish 压缩（> 1.25）
+```
 
 ---
 
@@ -160,11 +187,11 @@ soft_depends_on:
 | 3 | 4 字成语连用 | ≤ 1 处 / 章 |
 | 4 | "他眉头一皱" / "事情并不简单" 等万能侦探腔 | 0 次 |
 | 5 | "X 是一种难以言喻的感觉" 模板 | 0 次 |
-| 6 | 段落平均句数 | 在 [2, 4] |
-| 7 | 单段最长字数 | ≤ 120 字 |
-| 8 | 单句最长字数 | ≤ 40 字 |
-| 9 | 对话占比 | 在章纲允许范围 |
-| 10 | 连续 ≥ 5 段无对话 | 0 次（除非章纲允许独处章） |
+| 6 | 段落平均句数 | **按 chapter_type 自适应（v1.3）** —— 见 3.4 节 D29 表 |
+| 7 | 单段最长字数 | **按 chapter_type 自适应** |
+| 8 | 单句最长字数 | **按 chapter_type 自适应** |
+| 9 | 对话占比 | 在章纲允许范围（按 chapter_type） |
+| 10 | 连续 ≥ 5 段无对话 | 0 次（除非章纲允许独处章 / description-heavy） |
 | 11 | 形容词列举（≥3 个连用） | 0 次 |
 
 每章自动跑 11 条规则，输出 AIGC 评分（满分 100，每违一条扣 5-10 分）。
@@ -183,6 +210,12 @@ asset_type: audit-report
 chapter_no: 31
 audited_at: <ISO>
 auditor_version: 0.1.0
+audit_score: 87
+aigc_score: 92
+chapter_type: mixed                  # v1.3：从章纲第 5 字段读
+length_warning: false                # v1.3：D33 命中时设 true
+length_critical: false               # v1.3：跌出硬范围时设 true
+suggested_revise_mode: null          # v1.3：length critical 时建议 extend
 ---
 
 # 第 31 章 审稿报告
@@ -191,6 +224,7 @@ auditor_version: 0.1.0
 - 综合评分：87 / 100
 - AIGC 检测分：92 / 100
 - 大纲遵从度：100%
+- 字数：3120 / 3500（length_warning: false / length_critical: false）  # v1.3
 - 状态建议：approved 或 revise
 
 ## 维度命中

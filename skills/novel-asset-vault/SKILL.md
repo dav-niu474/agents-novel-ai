@@ -36,7 +36,7 @@ soft_depends_on:
 - 开书 / 卡文时需要灵感激发
 - 用户提供参考文本，要做风格指纹
 - 完书复盘，沉淀好桥段
-- 章节审稿评分 ≥ 95，asset-vault 主动提议沉淀
+- 章节审稿评分 ≥ 85（v1.3 从 95 调整），asset-vault 主动提议沉淀
 
 ❌ 不要使用：
 - 写正文 → `novel-chapter-writer`
@@ -433,7 +433,7 @@ LLM 读样本，用约束格式输出：
 步骤：
 
 1. **扫描所有 chapter-NNNN.md + audit/reports/chapter-NNNN.audit.md**
-2. **筛选高分章节**：audit_score ≥ 90 的章节
+2. **筛选高分章节**：audit_score ≥ 85 的章节（v1.3 从 90 调整，与单章主动提议阈值对齐）
 3. **从这些章节里抽段**：
    - 单段长度 100-300 字
    - 该段在审稿报告里被标记为"亮点"（如有）
@@ -504,7 +504,7 @@ original / reference 不能错标。reference 必须有 source_meta（author / s
 
 ### 上游 / 数据来源
 - 用户主动添加（最常见）
-- `novel-quality-auditor` 审稿评分 ≥ 95 时主动建议沉淀
+- `novel-quality-auditor` 审稿评分 ≥ 85 时主动建议沉淀（v1.3 从 95 调整）
 - `novel-chapter-writer` 写完后让 vault 自动扫亮点段（可选）
 
 ### 下游 / 数据消费

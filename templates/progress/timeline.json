@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "progress-timeline",
+  "asset_id": "timeline",
+  "version": 0,
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "data": {
+    "events": [
+      {
+        "ts": "<ISO>",
+        "type": "project-init",
+        "skill": "novel-studio",
+        "details": {"book_id": "<slug>-<6位随机>"}
+      },
+      {
+        "ts": "<ISO>",
+        "type": "blueprint-approved",
+        "skill": "novel-blueprint",
+        "details": {"version": 1}
+      },
+      {
+        "ts": "<ISO>",
+        "type": "chapter-write",
+        "skill": "novel-chapter-writer",
+        "chapter": 1,
+        "details": {
+          "duration_ms": 0,
+          "tokens": {"in": 0, "out": 0},
+          "model": "<模型名>",
+          "word_count": 0,
+          "length_warning": false,
+          "length_critical": false
+        }
+      },
+      {
+        "ts": "<ISO>",
+        "type": "chapter-audit",
+        "skill": "novel-quality-auditor",
+        "chapter": 1,
+        "details": {
+          "audit_score": 0,
+          "aigc_score": 0,
+          "issues": {"critical": 0, "major": 0, "minor": 0}
+        }
+      },
+      {
+        "ts": "<ISO>",
+        "type": "chapter-settle",
+        "skill": "novel-quality-auditor",
+        "chapter": 1,
+        "details": {"deltas_applied": 0}
+      }
+    ],
+    "_event_type_options": [
+      "project-init",
+      "blueprint-drafting", "blueprint-approved",
+      "world-update", "cheat-system-update", "powers-update",
+      "character-add", "character-update",
+      "outline-master-update", "outline-volume-update", "outline-chapter-add",
+      "chapter-plan", "chapter-compose", "chapter-write", "chapter-revise",
+      "chapter-audit", "chapter-settle",
+      "vault-add", "vault-use",
+      "radar-scan",
+      "decision-recorded", "lesson-recorded",
+      "milestone-reached",
+      "snapshot-taken"
+    ]
+  }
+}

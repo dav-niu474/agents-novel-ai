@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "progress-velocity",
+  "asset_id": "velocity",
+  "computed_at": "<ISO>",
+  "data": {
+    "all_time": {
+      "chapters_written": 0,
+      "total_words": 0,
+      "avg_words_per_chapter": 0,
+      "elapsed_days": 0,
+      "writing_days": 0,
+      "audit_pass_rate": 0.0,
+      "revise_rate": 0.0,
+      "length_warning_rate": 0.0,
+      "length_critical_rate": 0.0,
+      "avg_audit_score": 0.0,
+      "avg_aigc_score": 0.0
+    },
+    "last_7d": {
+      "chapters_written": 0,
+      "total_words": 0,
+      "writing_days": 0,
+      "chapters_per_day": 0.0,
+      "words_per_day": 0.0
+    },
+    "last_30d": {
+      "chapters_written": 0,
+      "total_words": 0,
+      "writing_days": 0,
+      "chapters_per_day": 0.0,
+      "words_per_day": 0.0
+    },
+    "estimated_completion": {
+      "target_chapters": 800,
+      "remaining_chapters": 800,
+      "current_chapters_per_day": 0.0,
+      "estimated_days_to_finish": null,
+      "estimated_finish_date": null,
+      "warning": null
+    },
+    "streak": {
+      "current": 0,
+      "longest": 0,
+      "longest_window": null
+    }
+  }
+}

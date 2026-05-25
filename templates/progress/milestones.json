@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "progress-milestones",
+  "asset_id": "milestones",
+  "version": 0,
+  "created_at": "<ISO>",
+  "updated_at": "<ISO>",
+  "data": {
+    "milestones": [
+      {
+        "id": "m-blueprint-approved",
+        "name": "蓝图定盘",
+        "type": "phase",
+        "_type_options": ["phase", "volume", "scene", "power", "character-arc", "audit-target"],
+        "status": "pending",
+        "_status_options": ["pending", "reached", "missed", "deferred"],
+        "target_chapter": null,
+        "reached_at": null,
+        "promised_in": "blueprint.md"
+      },
+      {
+        "id": "m-vol1-first-comeback",
+        "name": "<例：卷 1 第一爽点>",
+        "type": "scene",
+        "status": "pending",
+        "target_chapter": 5,
+        "promised_in": "blueprint.md 第 5 节"
+      },
+      {
+        "id": "m-vol1-end",
+        "name": "<例：卷 1 末高潮>",
+        "type": "volume",
+        "status": "pending",
+        "target_chapter": 50,
+        "promised_in": "outline/master.md + blueprint.md"
+      },
+      {
+        "id": "m-cheat-tier-2",
+        "name": "<例：金手指 Tier 1 → Tier 2>",
+        "type": "power",
+        "status": "pending",
+        "target_chapter": 50,
+        "promised_in": "world/cheat-system.json"
+      },
+      {
+        "id": "m-protagonist-jindan",
+        "name": "<例：主角金丹>",
+        "type": "character-arc",
+        "status": "pending",
+        "target_chapter": 300,
+        "promised_in": "world/powers.json.protagonist_curve"
+      }
+    ]
+  }
+}

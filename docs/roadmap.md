@@ -56,6 +56,61 @@
 
 ---
 
+## v1.3：实战学习反馈（已落地）
+
+> v1.2《吞天魔帝》前 5 章实战暴露了 5 个真实问题。v1.3 不是大改版，是**用实战数据修补 v1 设计**。
+>
+> 完整修复 PR：[`feat/v1.3-fixes-and-progress`](https://github.com/dav-niu474/agents-novel-ai/pulls)。
+
+### 5 个修复（基于实战暴露的问题）
+
+| # | 问题（v1.2 实战发现） | v1.3 修复 |
+|---|---------------------|----------|
+| 1 | 字数控制偏短（74.7% 达成率）：5 个事件 × 500 字贴近软范围下沿 | chapter-writer 加 **extend revise mode**（保留事件链，只插入感官段）+ 写前 pre-check 第 7 项（事件链字数预检）+ 写后强制自检（length warning -3 / length critical -5 三级分级） |
+| 2 | 章纲无字数估算导致下游字数偏短 | outline-architect 加 **R8 强约束**：章纲 frontmatter 强制 `estimated_words / events_count / chapter_type`；`events × per_event ≥ target × 0.85` 不满足不能 approved |
+| 3 | D29 段落节奏对动作章误报（动作章 1.9 句/段被判 minor） | quality-auditor **D29 chapter_type 自适应表**（dialogue-heavy / description-heavy / mixed / action-heavy 四种节奏） + **D33 length warning 严重度分级**（warn -3 / critical -5 / over -8） |
+| 4 | vault 主动沉淀阈值过高（≥ 95 只能触发 5 章中 1 章） | asset-vault 阈值降至 **≥ 85**（更广泛触发素材沉淀） |
+| 5 | 章纲 schema 没记录字数估算来源 | docs/design/01-asset-model.md 第 8.3 节 schema 同步：章纲 frontmatter 加 `estimated_words / events_count / chapter_type` 三个 v1.3 字段 |
+
+### 长文写作进度控制（progress/ 新子系统）
+
+第 4 类项目级资产，与 memory/ / vault/ / audit/ 平级：
+
+```
+progress/
+├── timeline.{json,md}              # 全书事件流（append-only）
+├── milestones.{json,md}            # 里程碑（卷末 / 爽点 / 境界跃迁）
+├── velocity.{json,md}              # 速度指标（chapters/day, 估算完结日期）
+├── decisions.md                    # 决策日志（重要选择记录）
+├── lessons.md                      # 经验沉淀（卷末复盘）
+├── todo.md                         # 待办清单（聚合 hooks 债务、章纲待写、修订待跑）
+├── logs/<date>.jsonl               # 每日执行日志（各 skill 必写）
+└── snapshots/snapshot-*.md         # 周末 / 卷末快照
+```
+
+**解决的真问题**：写到 200+ 章时作者忘了"我什么时候做了哪些决定 / 这个月写了几章 / 当前节奏跟得上吗 / 还欠读者多少债"。
+
+**实现要点**：
+- novel-studio v0.1.3 是 progress/ 总维护者，新增工作流 F.1-F.6
+- 工作流 B 状态导航接入 progress/velocity + todo + milestones（5 段式输出）
+- 全局规则 R7：所有 skill 必须 append `progress/logs/<date>.jsonl`
+
+### 范围
+
+- ✅ 5 个 SKILL.md 字数控制相关修复
+- ✅ 1 个新设计文档 [`docs/design/05-progress-tracking.md`](./design/05-progress-tracking.md)
+- ✅ 1 套新模板 `templates/progress/`（13 文件）
+- ✅ novel-studio 加进度跟踪工作流 F
+- ✅ 《吞天魔帝》实战项目回填 progress/ 数据
+
+### 不做（v1.3 明确不做）
+
+- ❌ 代码层强校验（v2）
+- ❌ 进度数据可视化 UI（v3）
+- ❌ 跨书 progress 横向对比（v3）
+
+---
+
 ## v2：CLI / Daemon
 
 ### 目标

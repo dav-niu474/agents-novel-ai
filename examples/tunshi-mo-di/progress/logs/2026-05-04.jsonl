@@ -1,0 +1,9 @@
+{"ts":"2026-05-04T10:00:00Z","skill":"novel-outline-architect","phase":"A.1","event":"master-saved","version":1,"acts":5,"volumes_estimated":12}
+{"ts":"2026-05-04T12:00:00Z","skill":"novel-outline-architect","phase":"workflow-D","event":"master-update","version":2,"note":"第 5 幕扩到卷 11-15"}
+{"ts":"2026-05-04T13:00:00Z","skill":"novel-outline-architect","phase":"A.2","event":"volume-saved","volume":1,"version":1,"target_chapters":50}
+{"ts":"2026-05-04T15:00:00Z","skill":"novel-outline-architect","phase":"workflow-D","event":"volume-update","volume":1,"version":2,"note":"反噬章 25 → 23"}
+{"ts":"2026-05-04T16:00:00Z","skill":"novel-outline-architect","phase":"A.3","event":"chapter-outline-saved","chapter":1,"events_count":5,"target_words":3500,"note":"v1.0 章纲，无 estimated_words 字段（v1.3 修复后第 6 章起补）"}
+{"ts":"2026-05-04T17:00:00Z","skill":"novel-outline-architect","phase":"A.3","event":"chapter-outline-saved","chapter":2,"events_count":7,"target_words":3500}
+{"ts":"2026-05-04T17:30:00Z","skill":"novel-outline-architect","phase":"A.3","event":"chapter-outline-saved","chapter":3,"events_count":8,"target_words":3500}
+{"ts":"2026-05-04T18:00:00Z","skill":"novel-outline-architect","phase":"A.3","event":"chapter-outline-saved","chapter":4,"events_count":9,"target_words":3500}
+{"ts":"2026-05-04T18:30:00Z","skill":"novel-outline-architect","phase":"A.3","event":"chapter-outline-saved","chapter":5,"events_count":14,"target_words":3500,"note":"事件最多但都很短，因为是动作章"}
