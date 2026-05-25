@@ -1,0 +1,6 @@
+{"ts":"2026-05-01T00:00:00Z","skill":"novel-studio","phase":"init","event":"project-init","book_id":"tunshi-mo-di-a3f9c2","title":"吞天魔帝"}
+{"ts":"2026-05-01T08:30:00Z","skill":"novel-blueprint","phase":"workflow-B","event":"blueprint-drafting","version":1,"step":"1-3"}
+{"ts":"2026-05-01T12:00:00Z","skill":"novel-blueprint","phase":"workflow-B","event":"blueprint-drafting","version":2,"step":"4-6"}
+{"ts":"2026-05-01T15:00:00Z","skill":"novel-blueprint","phase":"workflow-B","event":"blueprint-drafting","version":3,"step":"7-9"}
+{"ts":"2026-05-01T18:00:00Z","skill":"novel-blueprint","phase":"workflow-B","event":"blueprint-approved","version":4,"step":"10"}
+{"ts":"2026-05-01T18:30:00Z","skill":"novel-studio","phase":"upsert-milestone","event":"milestone-reached","milestone_id":"m-blueprint-approved"}

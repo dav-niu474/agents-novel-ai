@@ -99,7 +99,7 @@ soft_depends_on:
 
 #### 3.2.1 写作前自检（pre-write checklist）
 
-WRITE 阶段开始前，必须确认：
+WRITE 阶段开始前，必须确认（**v1.3 新增第 7 项：事件链字数预检**）：
 
 - [ ] 章纲 9 字段全有
 - [ ] 必出场角色的 character.md 都读到了字段 3、5、8
@@ -107,8 +107,15 @@ WRITE 阶段开始前，必须确认：
 - [ ] cheat-system.json 当前 tier 限制清楚（"主角现在不能用 Tier 2 能力"）
 - [ ] 章纲第 8 字段"不写"的禁忌清单内化
 - [ ] 章纲第 7 字段"字数 / 节奏"的目标值
+- [ ] **事件链字数预检（v1.3）**：章纲第 3 字段事件数 × 平均事件预期字数（默认 500）≥ target_words × 0.85
+  - 例：target_words = 3500，事件数 = 5，则 5 × 500 = 2500 < 3500 × 0.85 = 2975 ❌ **不足**
+  - 例：target_words = 3500，事件数 = 7，则 7 × 500 = 3500 ≥ 2975 ✅ **足够**
+  - **不足时不要硬写**——回 `novel-outline-architect` 走 rework，让它补 1-2 个事件 / 加深现有事件描写权重
+  - 章纲若已有 `estimated_words` frontmatter 字段（v1.3 优化），直接用它作为门槛
 
 任一项不满足，**回 outline-architect / character-atelier / studio**，不要继续。
+
+> **v1.3 学习背景**：v1.2《吞天魔帝》前 5 章实战中 5 章字数全部偏短（target 3500，实际均 2616），74.7% 达成率。根因是 5 个事件 × 500 字 = 2500，贴近软范围下沿 2975 但低于 target 3500 一截。修复策略是上面这条 pre-check + 3.2.6 节的硬范围 alert + 3.3 节新增 extend 修订模式。
 
 #### 3.2.2 首屏钩子规则（前 200 字）
 
@@ -177,13 +184,38 @@ WRITE 阶段开始前，必须确认：
 - 软范围 = target ± 15%（2975 - 4025）
 - 硬范围 = target ± 25%（2625 - 4375）
 
-写完后字数检查：
+写完后字数检查（**v1.3 强化报警分级**）：
 
 - 在软范围 → ✅ 直接保存
-- 在硬范围但不在软范围 → ⚠️ 记一条 length warning，但保存
-- 超出硬范围 → 进入 normalizer 单 pass（压缩 / 扩展），1 次后仍超就保存 + telemetry 报警
+- 在硬范围但不在软范围 → ⚠️ 记一条 **length warning**，但保存（quality-auditor D33 扣 -3）
+- 跌出硬范围 → 🚨 **length critical**，进入 normalizer 单 pass（压缩 / 扩展），**1 次后仍超就保存 + telemetry 报警 + status 保留 draft 等待用户决策**（D33 扣 -5）
 
 ⚠️ 不允许"硬截断"（在中间挥刀切掉一半），只允许重写式压缩 / 扩展。
+
+##### 写完后强制自检（v1.3 新增）
+
+写完正文后立即对实际字数做"硬范围 alert"：
+
+```
+actual = 实际可见字符数（不含 frontmatter / markdown 标记 / 空白）
+if actual < target × 0.75:                      # 例 < 2625（target 3500）
+    raise length_critical
+    建议触发：revise mode = extend（不是 rewrite）
+    log 一条 progress/logs/<date>.jsonl: {phase: "length-check", critical: true}
+elif actual < target × 0.85:                    # 例 < 2975
+    record length_warning
+    建议触发：revise mode = extend（可选）或保留 warning 进 settle
+elif actual <= target × 1.15:                   # 软范围
+    pass
+elif actual <= target × 1.25:                   # 软外硬内（超长）
+    record length_warning
+    建议：polish 模式压缩
+else:                                           # > target × 1.25
+    raise length_critical
+    建议：rewrite 模式重写更紧凑
+```
+
+> **v1.3 实战教训**：v1.2《吞天魔帝》5 章中第 3、5 章跌出硬范围下沿（2537 / 2334），第 1、2、4 章在硬内软外（2757 / 2732 / 2718）。问题在写前没拦——chapter-writer 接到 5 个事件章纲就开始写，没估算字数总和。v1.3 由 3.2.1 节 pre-check 在写前拦截，由本节在写后兜底。
 
 #### 3.2.7 主角能力校验
 
@@ -221,9 +253,9 @@ audit_score: null
 
 ### 3.3 REVISE 阶段（修订）
 
-**温度**：0.5（标准）/ 0.4（spot-fix） / 0.7（rewrite / rework）
+**温度**：0.5（标准）/ 0.4（spot-fix） / 0.7（rewrite / rework）/ 0.55（extend，v1.3 新增）
 
-5 种模式（参考 inkos）：
+6 种模式（v1.3 新增 extend）：
 
 #### 模式 1：polish（润色）
 
@@ -280,12 +312,61 @@ audit_score: null
 
 **温度**：0.5
 
+#### 模式 6：extend（v1.3 新增 - 字数补全）
+
+**适用**：
+- 章纲事件链已合理但写出来字数偏短（length warning / length critical）
+- 用户说"扩写 / 加长 / 补字"
+- 3.2.6 节字数治理建议 `revise mode = extend`
+
+**操作**：
+- **保留章纲事件链 + 章纲钩子 + 章纲爽点节拍 100% 不动**
+- **保留正文已有段落（不删不改）**——这是 extend 与 rewrite / polish 的核心区别
+- 只在事件链相邻段落之间**插入**新段落，补：
+  - 五感锚点（特别是嗅觉 / 触觉）
+  - 不规则小动作（角色标志性细节）
+  - 具体物件细节（替换原文的"宝剑"等类指词）
+  - 一两段更密的环境 / 心理描写
+  - **必要时由 outline-architect 补 1-2 个"过渡事件"**（不是新冲突），由 chapter-writer extend 阶段消费
+
+**温度**：0.55（比 polish 高一点，比 anti-detect / rewrite 低）
+
+**输入**：
+- 原文 chapter-NNNN.md
+- 章纲（再读一次）
+- length warning / critical 的具体差距值（例：差 600 字到 target）
+- 角色 character.md 字段 5 标志性细节（用于"加哪些不规则小动作"）
+
+**操作步骤**：
+
+```
+1. 计算缺口：gap = target_words - actual_words
+2. 按 "每段补 60-100 字" 估算需要插入的段数：n = ceil(gap / 80)
+3. 选定插入点（5 个候选优先级）：
+   a. 主角内心戏可加深的转折点
+   b. 重要场景切换前后（让读者"喘口气"）
+   c. 关键对话之间的"沉默"段
+   d. 动作场面前的环境锚定
+   e. 章末"留白" → 加一段感官余味
+4. 每个插入点写 2-4 句新段落，符合 anti-ai-patterns 规则
+5. 写完重跑 3.2.6 字数自检
+```
+
+**保留**：章纲所有字段 + 原文已有段落顺序与内容。
+
+**注意事项**：
+- ❌ 不能借 extend 的名义"加新冲突"——那是 rework 该做的
+- ❌ 不能借 extend 把章纲第 8 字段"不写"清单的事写进去
+- ❌ 不能借 extend 让主角境界突破或金手指越阶
+- ✅ 可以加深现有事件——例：原文一句"林烬解析了灵草"扩成三段（伸手前的犹豫 / 解析时的烫感细节 / 解析后的余味）
+
 #### REVISE 控制规则
 
 - 默认每章 audit-revise 循环 1 轮（避免无限循环）
 - 1 轮后仍有 critical issues：保留章节 status: draft，issues 列入审稿报告，留给用户
 - 用户可以手动触发额外 revise（"再修一次"）
 - 每次 revise 必须保留旧版本到 snapshots
+- **v1.3 新增**：length critical 触发 extend 模式时不计入"1 轮上限"——extend 是字数补全，不是质量修订
 
 ---
 
@@ -319,15 +400,19 @@ audit_score: null
 
 ### 工作流 C：修订（按模式）
 
-触发：用户说"polish / spot-fix / rewrite / anti-detect"或审稿后转 revise。
+触发：用户说"polish / spot-fix / rewrite / anti-detect / extend"或审稿后转 revise。
 
 ```
 1. 读章节 + 审稿报告（如有）
-2. 按模式执行
+2. 按模式执行（v1.3 共 6 种模式：polish / spot-fix / rewrite / rework / anti-detect / extend）
 3. 旧版本归档到 .snapshots/
 4. 写新版本，version + 1
-5. 触发 quality-auditor 重新审稿（spot-fix 例外，可只对修改段落审）
+5. 触发 quality-auditor 重新审稿（spot-fix / extend 例外，可只对修改段落审）
 ```
+
+**特别说明（v1.3）**：
+- length warning / critical 优先用 `extend` 模式，不要直接 rewrite
+- extend 失败（gap 太大、章纲事件链确实不够）→ 转 rework，回 outline-architect 补事件
 
 ### 工作流 D：续写（卡住后接着写）
 
@@ -362,9 +447,9 @@ audit_score: null
 
 每个出场角色对照 character.md 字段 3。决策模式 / 情绪锚点不能突变。
 
-### R5：字数 ±15%，禁止硬截断
+### R5：字数 ±15%，禁止硬截断；length critical 走 extend 不走 rewrite
 
-软范围内 OK，超出走单 pass 归一化，最多 1 次。
+软范围内 OK，超出软范围记 length warning，跌出硬范围记 length critical 走 normalizer / extend 单 pass。**跌出硬范围下沿（< target × 0.75）时优先 `extend` 模式补字而不是 rewrite**——v1.3 新增模式，保留事件链、保留已有段落、只插入感官 / 心理 / 环境段。详见 3.2.6 节与 3.3 节模式 6。
 
 ### R6：默认 status: draft，等待审稿
 
@@ -408,7 +493,8 @@ audit_score: null
 | 章纲缺失 / 未 approved | 拒绝，回 outline-architect |
 | 章纲第 3 字段事件链矛盾 | 拒绝，提示用户走 rework |
 | 主角境界与 powers 冲突 | 拒绝写违规段落，提示是 chapter / powers 哪一边错了 |
-| 字数硬范围外，1 次归一化仍失败 | 保存 + 长度 warning + 提示用户手动改章纲 |
+| 字数硬范围外，1 次归一化仍失败 | 切到 `extend` 模式（v1.3）做字数补全，不要 rewrite；保存 + 长度 warning + 提示用户手动改章纲 |
+| 字数 < target × 0.75（length critical） | 自动切 `extend`，1 次后仍不达 target × 0.85 → 转 rework 回 outline-architect 补事件 |
 | 用户没装 vault style-fingerprint，blueprint 第 7 节又指定了风格指纹 | 警告：blueprint 引用了风格指纹但 vault 没有；询问是按通用风格写还是先做 fingerprint |
 | 续写时检测到风格断裂 | 警告并继续，让 quality-auditor 后续修 |
 | LLM 输出带 markdown 围栏 | post-process 剥离 |

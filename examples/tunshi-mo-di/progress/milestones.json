@@ -1,0 +1,162 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "progress-milestones",
+  "asset_id": "milestones",
+  "version": 3,
+  "created_at": "2026-05-01T00:00:00Z",
+  "updated_at": "2026-05-24T18:00:00Z",
+  "data": {
+    "milestones": [
+      {
+        "id": "m-blueprint-approved",
+        "name": "蓝图定盘",
+        "type": "phase",
+        "status": "reached",
+        "target_chapter": null,
+        "reached_at": "2026-05-01T18:00:00Z",
+        "promised_in": "blueprint.md"
+      },
+      {
+        "id": "m-world-ready",
+        "name": "世界 + 金手指 + 力量等级三件套就绪",
+        "type": "phase",
+        "status": "reached",
+        "target_chapter": null,
+        "reached_at": "2026-05-02T17:30:00Z",
+        "promised_in": "world/*"
+      },
+      {
+        "id": "m-cast-ready",
+        "name": "5 个核心角色 + 关系网就绪",
+        "type": "phase",
+        "status": "reached",
+        "target_chapter": null,
+        "reached_at": "2026-05-03T18:00:00Z",
+        "promised_in": "characters/*"
+      },
+      {
+        "id": "m-outline-volume-1",
+        "name": "卷 1 卷纲 + 前 5 章章纲就绪",
+        "type": "phase",
+        "status": "reached",
+        "target_chapter": 5,
+        "reached_at": "2026-05-04T18:30:00Z",
+        "promised_in": "outline/volumes/volume-01.md"
+      },
+      {
+        "id": "m-vol1-first-comeback",
+        "name": "卷 1 第一爽点（七寸断反杀）",
+        "type": "scene",
+        "status": "reached",
+        "target_chapter": 5,
+        "reached_at": "2026-05-24T16:45:00Z",
+        "audit_score": 89,
+        "promised_in": "blueprint.md 第 5 节 + cheat-system.beats[2]"
+      },
+      {
+        "id": "m-elder-zhang-formal",
+        "name": "张三长老首次正式出场",
+        "type": "character-arc",
+        "status": "pending",
+        "target_chapter": 15,
+        "promised_in": "characters/antagonists/antagonist-elder-zhang.md + outline/volumes/volume-01.md"
+      },
+      {
+        "id": "m-vol1-mid-comeback",
+        "name": "卷 1 中段爽点（解析心魔功法绝境翻盘）",
+        "type": "scene",
+        "status": "pending",
+        "target_chapter": 15,
+        "promised_in": "blueprint.md 第 5 节 + cheat-system.beats[3]"
+      },
+      {
+        "id": "m-cheat-first-backlash",
+        "name": "金手指首次反噬",
+        "type": "power",
+        "status": "pending",
+        "target_chapter": 25,
+        "promised_in": "cheat-system.beats[4] (chapter:25, type:backlash)"
+      },
+      {
+        "id": "m-vol1-canjuan-windfall",
+        "name": "残卷浮现宗门后山秘境信息",
+        "type": "scene",
+        "status": "pending",
+        "target_chapter": 30,
+        "promised_in": "cheat-system.beats[5] (chapter:30, type:windfall)"
+      },
+      {
+        "id": "m-vol1-end-climax",
+        "name": "卷 1 末高潮（祭祀大典翻盘）",
+        "type": "volume",
+        "status": "pending",
+        "target_chapter": 50,
+        "promised_in": "blueprint.md 第 5 节 + outline/volumes/volume-01.md 卷高潮"
+      },
+      {
+        "id": "m-cheat-tier-2",
+        "name": "金手指 Tier 1 → Tier 2（一阶封印自然解开）",
+        "type": "power",
+        "status": "pending",
+        "target_chapter": 50,
+        "promised_in": "cheat-system.beats[6] (type:stage-up)"
+      },
+      {
+        "id": "m-protagonist-zhuji",
+        "name": "主角境界：炼气九层 / 筑基初期",
+        "type": "character-arc",
+        "status": "pending",
+        "target_chapter": 50,
+        "promised_in": "world/powers.json.protagonist_curve"
+      },
+      {
+        "id": "m-vol2-leave-sect",
+        "name": "脱离宗门",
+        "type": "volume",
+        "status": "pending",
+        "target_chapter": 100,
+        "promised_in": "outline/master.md 第 1 幕末"
+      },
+      {
+        "id": "m-protagonist-zhuji-mid",
+        "name": "主角境界：筑基中期",
+        "type": "character-arc",
+        "status": "pending",
+        "target_chapter": 100,
+        "promised_in": "world/powers.json.protagonist_curve"
+      },
+      {
+        "id": "m-protagonist-jindan",
+        "name": "主角境界：金丹",
+        "type": "character-arc",
+        "status": "pending",
+        "target_chapter": 300,
+        "promised_in": "world/powers.json.protagonist_curve"
+      },
+      {
+        "id": "m-canjuan-second-seal",
+        "name": "残卷露出第二段封印真容",
+        "type": "scene",
+        "status": "pending",
+        "target_chapter": 500,
+        "promised_in": "cheat-system.beats[8] (type:transcend) + master.md 主线第 3 幕"
+      },
+      {
+        "id": "m-canjuan-vanishing-start",
+        "name": "残卷开始倒计时消失",
+        "type": "power",
+        "status": "pending",
+        "target_chapter": 720,
+        "promised_in": "cheat-system.beats[9] (type:transcend) + blueprint 第 10 节"
+      },
+      {
+        "id": "m-protagonist-huashen-end",
+        "name": "结局：主角化神 + 残卷消失 + 主角自立",
+        "type": "phase",
+        "status": "pending",
+        "target_chapter": 800,
+        "promised_in": "blueprint.md 第 10 节 + master.md 第 5 幕"
+      }
+    ]
+  }
+}

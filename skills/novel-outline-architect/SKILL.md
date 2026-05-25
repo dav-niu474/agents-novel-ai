@@ -170,7 +170,7 @@ maintained_by: novel-outline-architect
 
 ⚠️ 这是 chapter-writer 的**唯一直接输入**。每章一份，9 个字段全部不能少。
 
-#### 9 字段模板
+#### 9 字段模板（v1.3 frontmatter 加 estimated_words）
 
 ```markdown
 ---
@@ -178,6 +178,8 @@ asset_type: outline-chapter
 chapter_no: <N>
 volume_no: <V>
 target_words: 3500
+estimated_words: 3500       # v1.3 新增：本章纲事件链能撑起的预期字数
+events_count: 6             # v1.3 新增：第 3 字段事件总数（自动统计）
 version: 1
 status: drafting | approved
 maintained_by: novel-outline-architect
@@ -194,11 +196,14 @@ maintained_by: novel-outline-architect
 - <角色 ID>（一句话照面）
 
 ## 3. 必发生事件（按顺序）
+<!-- ⚠️ v1.3 强约束：events_count × 500 ≥ target_words × 0.85 -->
+<!-- ⚠️ target_words = 3500 时，建议 events_count ≥ 6 -->
 1. <事件 1>
 2. <事件 2>
 3. <事件 3>
 4. <事件 4>
 5. <事件 5>
+6. <事件 6>
 
 ## 4. 钩子（hookOps）
 - mustOpen：<本章新埋的伏笔，1-2 条>
@@ -208,6 +213,8 @@ maintained_by: novel-outline-architect
 
 ## 5. 爽点节拍
 <本章核心爽点 + 类型（first-use / windfall / comeback / cost-reveal / stage-up / backlash / transcend）>
+<!-- ⚠️ v1.3 增加 chapter_type 子字段：dialogue-heavy / description-heavy / action-heavy / mixed -->
+<chapter_type: mixed>
 
 ## 6. 情绪曲线
 <开场情绪> → <中段情绪> → <结尾情绪>
@@ -216,6 +223,11 @@ maintained_by: novel-outline-architect
 - 总字数：<target_words>（±15%）
 - 对话占比：<%>
 - 段落节奏：手机阅读，2-4 句一段
+- chapter_type 决定的子节奏（v1.3）：
+  - dialogue-heavy：每事件 ~700 字，对话占比 50%+
+  - description-heavy：每事件 ~600 字，对话占比 25%
+  - action-heavy：每事件 ~400 字，对话占比 < 25%（短句快剪节奏）
+  - mixed：每事件 ~500 字（默认）
 
 ## 8. 不写
 - ❌ <本章绝对不能出现的内容 1>
@@ -229,6 +241,26 @@ maintained_by: novel-outline-architect
 - subplot_board：<相关支线推进>
 ```
 
+#### 字数估算公式（v1.3 新增）
+
+```
+estimated_words = events_count × per_event_words(chapter_type)
+
+per_event_words 表：
+  dialogue-heavy:    700
+  description-heavy: 600
+  mixed (默认):      500
+  action-heavy:      400
+
+强约束：estimated_words ≥ target_words × 0.85
+弱建议：estimated_words ≥ target_words × 1.0（最稳）
+
+不满足时三种选择：
+  a. 加 1-2 个事件（最常用）
+  b. 改 chapter_type（例 action-heavy → mixed）
+  c. 降 target_words（最后选项，需在卷纲层面记账）
+```
+
 #### 9 字段必要性论证
 
 每字段的存在意义：
@@ -237,9 +269,9 @@ maintained_by: novel-outline-architect
 |------|-------------|
 | 1 一句话目标 | chapter-writer 不知道章节中心，会写发散 |
 | 2 必出场角色 | character-matrix 校验失败（出场没卡 / 该出场不出场） |
-| 3 必发生事件 | 章节没骨架，writer 凭感觉写 |
+| 3 必发生事件 | 章节没骨架，writer 凭感觉写；**v1.3 起还决定字数预算** |
 | 4 钩子 | pending_hooks 没法 settle，长期伏笔失控 |
-| 5 爽点节拍 | 章节没爽点，读者弃读 |
+| 5 爽点节拍 + chapter_type | 章节没爽点，读者弃读；**v1.3 起 chapter_type 决定字数节奏子模式** |
 | 6 情绪曲线 | 写出来情绪平淡 |
 | 7 字数 / 节奏 | 字数失控 |
 | 8 不写 | writer 容易擅自加戏（如让角色突然 OOC） |
@@ -376,19 +408,42 @@ maintained_by: novel-outline-architect
 
 通常 1-2 个核心角色 + 0-3 个辅助角色。
 
-#### B.4 必发生事件链
+#### B.4 必发生事件链 + 字数估算（v1.3 强化）
 
-3-5 个事件，按时间顺序。每个事件 1 句话。
+3-7 个事件，按时间顺序。每个事件 1 句话。
 
 ⚠️ 事件链必须能"闭环"：开场状态 → 中段冲突 → 结尾状态变化。
 
-#### B.5 爽点节拍 + 情绪曲线
+⚠️ **v1.3 强约束（R8）**：事件链落定后立即估算 `estimated_words`：
+
+```
+chapter_type 默认 mixed (500/event)
+estimated_words = events_count × per_event_words
+
+if estimated_words < target_words × 0.85:
+    报警："事件不够撑起 target_words = X"
+    → 给作者三个选项：加事件 / 改 chapter_type / 降 target_words
+    → 不让用户进 B.5（卡住直到字数足够）
+```
+
+例：target_words = 3500，5 个 mixed 事件 → 2500 < 2975 ❌
+处理：建议加 1 个事件到 6 个（→ 3000 ≥ 2975 ✅），或者改 chapter_type 为 description-heavy（5 × 600 = 3000）。
+
+#### B.5 爽点节拍 + 情绪曲线 + chapter_type（v1.3 加 chapter_type）
 
 参考 cheat-system.beats 和 character emotional_arcs.json。
 
+**chapter_type（v1.3 新增）**：从下面选一种填到章纲第 5 节：
+- `dialogue-heavy`：对话推动剧情（师徒戏 / 谈判戏 / 信息揭示戏）
+- `description-heavy`：描写为主（开场建立场景 / 慢热铺垫章 / 闪回章）
+- `action-heavy`：动作 / 战斗（短句快剪节奏，对话占比 < 25%）
+- `mixed`（默认）：综合，无明显倾斜
+
+chapter_type 决定 per_event_words 和 quality-auditor D29 段落节奏的允许范围。
+
 #### B.6 字数 / 节奏 + 不写 + 状态耦合
 
-根据 blueprint 第 9 节给字数；不写部分参考 character.md 第 8 字段；状态耦合是 9 类资产中本章会修改的。
+根据 blueprint 第 9 节给字数；不写部分参考 character.md 第 8 字段；状态耦合是 9 类资产中本章会修改的。**v1.3 在 frontmatter 自动写入 estimated_words 与 events_count**。
 
 #### B.7 输出 + 用户校对
 
@@ -459,6 +514,23 @@ mustAdvance / mustClose 必须用 pending_hooks.json 真实存在的 hook_id。�
 
 用户给的 context（"本章拉回师徒矛盾"）优先级高于 stale 警告之类的自动建议。
 
+### R8：事件链字数对齐 target_words（v1.3 新增）
+
+每个章纲在 `status: approved` 之前必须自检：
+
+```
+estimated_words = events_count × per_event_words(chapter_type)
+assert estimated_words ≥ target_words × 0.85
+```
+
+不满足时不能 approved。三种修法：
+
+1. **加事件**（首选）：通常 5 → 6 / 7 个事件即可
+2. **改 chapter_type**：从 action-heavy（400）切到 mixed（500）或 description-heavy（600）
+3. **降 target_words**：最后选项，需要在卷纲层面记账
+
+> **v1.3 学习背景**：v1.2《吞天魔帝》5 章实战中字数全部偏短。根因是章纲事件链 5 个 × 500 字贴近软范围下沿，而 chapter-writer 的 v1.0 版本没有"字数 pre-check"。R8 + chapter-writer 3.2.1 第 7 项 + 3.2.6 写后自检，三层兜底让 v1.3 起的章纲不再"事件不够字数硬撑"。
+
 ---
 
 ## 6. 与其他 skill 的协作
@@ -488,6 +560,8 @@ mustAdvance / mustClose 必须用 pending_hooks.json 真实存在的 hook_id。�
 | pending_hooks 为空（首次 PLAN） | 跳过 mustAdvance / mustClose 校验，只生成 mustOpen |
 | volume-NN 章节范围被 chapter-NNNN 越界（写到第 51 章但卷 1 是 1-50） | 警告，建议先写卷 2 卷纲 |
 | 用户要重做总纲 | 强警告：所有卷纲 / 章纲都可能受影响 |
+| 事件链字数估算不足（v1.3） | R8 拒绝 approved；提示三种修法（加事件 / 改 chapter_type / 降 target_words） |
+| 用户坚持事件不足 | 允许 approved 但 frontmatter 写 `length_warning_at_outline_time: true`，chapter-writer 写时双重提示 |
 
 ---
 

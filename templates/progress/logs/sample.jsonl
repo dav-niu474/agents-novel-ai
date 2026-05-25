@@ -1,0 +1,14 @@
+{"ts":"<ISO>","skill":"novel-studio","phase":"init","event":"project-init","book_id":"<book-id>"}
+{"ts":"<ISO>","skill":"novel-blueprint","phase":"workflow-B","event":"blueprint-approved","version":1}
+{"ts":"<ISO>","skill":"novel-worldforge","phase":"A.1","event":"worldview-saved"}
+{"ts":"<ISO>","skill":"novel-worldforge","phase":"A.2","event":"powers-saved"}
+{"ts":"<ISO>","skill":"novel-worldforge","phase":"A.3","event":"cheat-system-saved","tier_count":4,"limits_count":4,"beats_count":10}
+{"ts":"<ISO>","skill":"novel-character-atelier","phase":"workflow-A","event":"characters-saved","count":5}
+{"ts":"<ISO>","skill":"novel-outline-architect","phase":"A.1","event":"master-saved"}
+{"ts":"<ISO>","skill":"novel-outline-architect","phase":"A.2","event":"volume-01-saved"}
+{"ts":"<ISO>","skill":"novel-outline-architect","phase":"A.3","event":"chapter-outline-saved","chapter":1,"events_count":6,"chapter_type":"mixed","estimated_words":3000,"target_words":3500}
+{"ts":"<ISO>","skill":"novel-chapter-writer","phase":"compose","chapter":1,"input_tokens":8234,"model":"<model>","duration_ms":234}
+{"ts":"<ISO>","skill":"novel-chapter-writer","phase":"write","chapter":1,"output_tokens":3892,"duration_ms":18234,"word_count":2757}
+{"ts":"<ISO>","skill":"novel-chapter-writer","phase":"length-check","chapter":1,"actual":2757,"target":3500,"length_warning":true,"length_critical":false}
+{"ts":"<ISO>","skill":"novel-quality-auditor","phase":"audit","chapter":1,"issues_critical":0,"issues_major":0,"issues_minor":1,"audit_score":87,"aigc_score":94}
+{"ts":"<ISO>","skill":"novel-quality-auditor","phase":"settle","chapter":1,"deltas":{"current_state":2,"particle_ledger":3,"pending_hooks":4,"chapter_summaries":1,"emotional_arcs":2,"character_matrix":2}}

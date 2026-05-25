@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "asset_type": "progress-velocity",
+  "asset_id": "velocity",
+  "computed_at": "2026-05-24T18:00:00Z",
+  "data": {
+    "all_time": {
+      "chapters_written": 5,
+      "total_words": 13078,
+      "avg_words_per_chapter": 2616,
+      "elapsed_days": 24,
+      "writing_days": 5,
+      "audit_pass_rate": 1.0,
+      "revise_rate": 0.2,
+      "length_warning_rate": 1.0,
+      "length_critical_rate": 0.4,
+      "avg_audit_score": 85.8,
+      "avg_aigc_score": 93.0
+    },
+    "last_7d": {
+      "chapters_written": 5,
+      "total_words": 13078,
+      "writing_days": 1,
+      "chapters_per_day_writing": 5.0,
+      "chapters_per_day_calendar": 0.71,
+      "words_per_day_writing": 13078,
+      "words_per_day_calendar": 1868
+    },
+    "last_30d": {
+      "chapters_written": 5,
+      "total_words": 13078,
+      "writing_days": 1,
+      "note": "项目刚开始，30d 与全期相同"
+    },
+    "estimated_completion": {
+      "target_chapters": 800,
+      "remaining_chapters": 795,
+      "current_chapters_per_day_calendar": 0.21,
+      "estimated_days_to_finish": 3786,
+      "estimated_finish_date": "2036-10-04",
+      "warning": "⚠️ 当前 0.21 章/天 + 字数偏短，按 800 章 calendar days 计算 → ~10 年完结。建议提速至 1 章/天（实战 5 章实测可行）+ 解决字数问题（v1.3 修复后预期可达）",
+      "alternative_estimate_writing_days": "如果保持 1 章/天 writing rate（5 章实测），需要 800 写作日 ≈ 2.2 年（按每周写 7 天）"
+    },
+    "streak": {
+      "current": 0,
+      "longest": 1,
+      "longest_window": "2026-05-24（5 章集中突击）",
+      "note": "实战是单日突击，不是匀速日更，不构成 streak"
+    },
+    "v13_quality_indicators": {
+      "length_critical_chapters": [3, 5],
+      "length_warning_chapters": [1, 2, 4],
+      "extend_mode_runs": 0,
+      "note": "v1.0 章纲未填 estimated_words，5 章全部触发 length_warning。v1.3 修复后第 6 章起应能恢复正常字数。"
+    }
+  }
+}

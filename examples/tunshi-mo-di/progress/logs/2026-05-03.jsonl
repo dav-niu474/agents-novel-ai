@@ -1,0 +1,7 @@
+{"ts":"2026-05-03T10:00:00Z","skill":"novel-character-atelier","phase":"workflow-A.2","event":"character-add","id":"protagonist-lin-jin","fields_count":8,"version":1}
+{"ts":"2026-05-03T11:00:00Z","skill":"novel-character-atelier","phase":"workflow-A.3","event":"character-add","id":"antagonist-zhao-tianxiao","fields_count":8}
+{"ts":"2026-05-03T13:00:00Z","skill":"novel-character-atelier","phase":"workflow-A.3","event":"character-add","id":"antagonist-elder-zhang","fields_count":8,"note":"预埋第 15 章正式出场"}
+{"ts":"2026-05-03T14:00:00Z","skill":"novel-character-atelier","phase":"workflow-A.4","event":"character-add","id":"supporting-su-wanrou","fields_count":8}
+{"ts":"2026-05-03T15:00:00Z","skill":"novel-character-atelier","phase":"workflow-A.4","event":"character-add","id":"supporting-shitai-yu-qing","fields_count":8}
+{"ts":"2026-05-03T16:00:00Z","skill":"novel-character-atelier","phase":"workflow-A.5","event":"relationships-saved","pairs":8}
+{"ts":"2026-05-03T18:00:00Z","skill":"novel-studio","phase":"workflow-F.2","event":"decision-recorded","id":"d-cast-5-only"}

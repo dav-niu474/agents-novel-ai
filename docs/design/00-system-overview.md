@@ -16,6 +16,12 @@
 2. **流水线可拆可合（Pipeline-Composable）**：每个 skill 是一个原子能力，既能独立用，也能被根 skill `novel-studio` 编排成完整流水线（开书 → 写大纲 → 写细纲 → 写正文 → 审稿 → 修订）。
 3. **Runtime 无依赖（Runtime-Agnostic）**：v1 不绑定任何 CLI、后端、数据库。任何能读写文件的 Agent 客户端（Claude Code、Cursor、Kiro、OpenClaw）都能直接用。文件即数据库。
 
+### 1.4 v1.3 增补：作者侧元数据独立分层
+
+> v1.2《吞天魔帝》前 5 章实战暴露了一个盲区：写到中段时作者**不知道自己昨天做了什么决定 / 这周写了几章 / 还欠读者多少债**。memory/ 管的是"故事还没忘"，但作者侧的过程元数据没人管。
+>
+> v1.3 新增 **`progress/` 子系统**作为第 4 类项目级资产，与 memory/ / vault/ / audit/ 平级。详见 [`05-progress-tracking.md`](./05-progress-tracking.md)。
+
 ### 1.3 从三个参考项目继承什么、放弃什么
 
 | 维度 | 选择 | 理由 |
@@ -220,4 +226,5 @@ inkos 在 0.6.0 之后做了同样的事：truth file 的权威源是 JSON，Mar
 - Pipeline 编排：[`02-pipeline-architecture.md`](./02-pipeline-architecture.md)
 - 长期记忆与素材沉淀：[`03-memory-and-vault.md`](./03-memory-and-vault.md)
 - Skill 规范：[`04-skill-spec.md`](./04-skill-spec.md)
-- 演进路线：[`../roadmap.md`](../roadmap.md)
+- **长文写作进度控制（v1.3 新增）**：[`05-progress-tracking.md`](./05-progress-tracking.md)
+- 演进路线（含 v1.3 节）：[`../roadmap.md`](../roadmap.md)

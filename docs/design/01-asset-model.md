@@ -517,6 +517,9 @@ asset_type: outline-chapter
 chapter_no: 1
 volume_no: 1
 target_words: 3500
+estimated_words: 3500       # v1.3 新增：本章纲事件链能撑起的预期字数 = events_count × per_event_words(chapter_type)
+events_count: 6             # v1.3 新增：第 3 字段事件总数
+chapter_type: mixed         # v1.3 新增：dialogue-heavy / description-heavy / mixed / action-heavy
 version: 1
 maintained_by: novel-outline-architect
 status: approved
@@ -538,6 +541,7 @@ status: approved
 3. 玉简贴身后头脑发烫，浮现"天工"二字
 4. 夜里偷偷研究，识出"解析"二字
 5. 试着对身边的杂草发动解析，得到"野生灵草·百年缚地芸"的判定
+6. 章末再确认一次衣襟内侧（穿越前的纸 + 玉简贴身），暗示长期伏笔
 
 ## 4. 钩子（mustOpen / mustClose）
 - mustOpen：玉简会发烫的真正原因
@@ -546,14 +550,16 @@ status: approved
 
 ## 5. 爽点节拍
 - 第一次解析成功的轻微"原来如此"快感（不要过度）
+- chapter_type: mixed（综合类，没有明显倾斜）
 
 ## 6. 情绪曲线
 压抑（被欺凌）→ 麻木（独自取水）→ 微光（玉简发烫）→ 谨慎兴奋（解析成功）
 
 ## 7. 字数 / 节奏
 - 总字数：3500 字（±15%）
+- estimated_words: 6 × 500 = 3000 ⚠️ 略低于 target_words × 0.85 = 2975 + 25 缓冲，建议改 description-heavy 或加事件
 - 对话占比：约 25%（第 1 章对白少正常，主角独处为主）
-- 段落节奏：手机阅读，2-4 句一段
+- 段落节奏：手机阅读，2-4 句一段（mixed 默认）
 
 ## 8. 不写
 - ❌ 直接揭示残卷来源
@@ -566,6 +572,14 @@ status: approved
 ```
 
 > 章纲是 chapter-writer 的硬契约。写正文时如果章纲缺字段，应先回到 outline-architect 补齐，不应让 writer 凭空发挥。
+>
+> **v1.3 新增字段说明**：
+> - `events_count`：第 3 字段事件总数，由 outline-architect 自动统计
+> - `chapter_type`：dialogue-heavy / description-heavy / mixed / action-heavy 四选一，决定 per_event_words 系数（700 / 600 / 500 / 400）
+> - `estimated_words` = events_count × per_event_words(chapter_type)
+> - 强约束：`estimated_words ≥ target_words × 0.85`（详见 [`skills/novel-outline-architect/SKILL.md`](../../skills/novel-outline-architect/SKILL.md) R8）
+> - 不满足时不能 status: approved，需要：①加事件 ②改 chapter_type ③降 target_words
+> - 这条约束是 v1.2《吞天魔帝》5 章实战字数偏短（74.7%）后的反馈学习。详见 [`docs/roadmap.md`](../roadmap.md) v1.3 节。
 
 ---
 

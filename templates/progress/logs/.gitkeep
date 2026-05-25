@@ -1,0 +1,3 @@
+# 这里存放每日执行日志（jsonl 格式，按日切分）
+# 文件名：YYYY-MM-DD.jsonl
+# 一行一条事件，由各 skill append。
