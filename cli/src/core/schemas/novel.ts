@@ -2,31 +2,64 @@
  * Schema for novel.json (project metadata).
  *
  * Pinned to docs/design/01-asset-model.md §3.
+ *
+ * Genre / Platform are intentionally lenient (free-form strings) because
+ * Chinese web novels have many niche subgenres that aren't worth strictly
+ * enumerating. The KNOWN_* constants are used by interactive prompts to
+ * suggest common values without rejecting custom ones.
+ *
+ * Real-world example: examples/tunshi-mo-di/novel.json uses `"moofa"` (末法)
+ * which isn't in any canonical list — locking down the enum would break
+ * compat with v1.2 release data.
  */
 import { z } from 'zod';
 import { ISODateTime, NonNegativeInt, PositiveInt, ProjectId } from './common.js';
 
-/** Genre enum — matches blueprint SKILL.md options (Chinese web-novel canon). */
-export const Genre = z.enum([
-  'xuanhuan', // 玄幻
-  'xianxia', // 仙侠
-  'urban', // 都市
-  'lishi', // 历史
-  'kehuan', // 科幻
-  'moshi', // 末世
-  'youxi', // 游戏
-  'wuxianliu', // 无限流
-  'yanqing', // 言情
-  'lingyi', // 灵异
-  'other',
-]);
+// ---------- Genre ----------
+
+/**
+ * Common genre codes shown in interactive prompts. **NOT a closed set** —
+ * users may pass any string. Display name in `name`, code in `value`.
+ */
+export const KNOWN_GENRES = [
+  { value: 'xuanhuan', name: '玄幻' },
+  { value: 'xianxia', name: '仙侠' },
+  { value: 'mofa', name: '末法' },
+  { value: 'urban', name: '都市' },
+  { value: 'lishi', name: '历史' },
+  { value: 'kehuan', name: '科幻' },
+  { value: 'moshi', name: '末世' },
+  { value: 'youxi', name: '游戏' },
+  { value: 'wuxianliu', name: '无限流' },
+  { value: 'yanqing', name: '言情' },
+  { value: 'lingyi', name: '灵异' },
+  { value: 'wuxia', name: '武侠' },
+  { value: 'other', name: '其他' },
+] as const;
+
+/** Genre code — any non-empty string. Use `KNOWN_GENRES` in prompts. */
+export const Genre = z.string().min(1, 'genre 不能为空');
 export type Genre = z.infer<typeof Genre>;
 
-/** Target platforms in the Chinese web-novel ecosystem. */
-export const Platform = z.enum(['qidian', 'fanqie', 'jinjiang', 'ciweimao', 'zhihu', 'other']);
+// ---------- Platform ----------
+
+export const KNOWN_PLATFORMS = [
+  { value: 'qidian', name: '起点' },
+  { value: 'fanqie', name: '番茄' },
+  { value: 'jinjiang', name: '晋江' },
+  { value: 'ciweimao', name: '刺猬猫' },
+  { value: 'zhihu', name: '知乎盐选' },
+  { value: 'qq', name: 'QQ 阅读' },
+  { value: 'tangjia', name: '塔读' },
+  { value: 'other', name: '其他' },
+] as const;
+
+export const Platform = z.string().min(1, 'platform 不能为空');
 export type Platform = z.infer<typeof Platform>;
 
-/** Audience demographic. */
+// ---------- Audience ----------
+
+/** Audience is a small closed set; keep as enum. */
 export const Audience = z.enum([
   '',
   'male-young-adult',
@@ -36,6 +69,17 @@ export const Audience = z.enum([
   'mixed',
 ]);
 export type Audience = z.infer<typeof Audience>;
+
+export const KNOWN_AUDIENCES = [
+  { value: 'male-young-adult', name: '男频青年向' },
+  { value: 'male-middle', name: '男频中年向' },
+  { value: 'female-young-adult', name: '女频青年向' },
+  { value: 'female-middle', name: '女频中年向' },
+  { value: 'mixed', name: '不限性别' },
+  { value: '', name: '不确定' },
+] as const;
+
+// ---------- Pipeline status ----------
 
 /** Pipeline stage status fields used by novel.json. */
 export const StageStatus = z.enum(['pending', 'drafting', 'in_progress', 'approved', 'archived']);
@@ -50,6 +94,8 @@ export const AgentsConfig = z
   .partial()
   .passthrough();
 export type AgentsConfig = z.infer<typeof AgentsConfig>;
+
+// ---------- Novel ----------
 
 /**
  * The full novel.json schema. The shape mirrors the example in 01-asset-model.md §3

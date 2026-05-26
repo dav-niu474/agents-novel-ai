@@ -91,12 +91,40 @@ src/
 
 1. 在 `core/schemas/common.ts` 的 `AssetType` enum 里加。
 2. 在 `core/schemas/<asset>.ts` 写 frontmatter + body 的 Zod schema，包括 `BaseFrontmatter.extend(...)`。
-3. 在 `core/assets/paths.ts` 的 `ProjectPaths` 加路径字段。
+3. 在 `core/assets/paths.ts` 的 `ProjectPaths` 加路径字段（**JSON + MD 双写资产同时加 `.json` 和 `.md` 两个字段**）。
 4. 在 `core/assets/<asset>.ts` 实现 `readX / writeX / buildInitialX`。
 5. 在 `core/assets/scaffold.ts` 的 `allDirs(p)` 里加新目录。
-6. 在 `core/status/detector.ts` 决策树里加判定。
-7. 至少一个 `tests/<asset>.test.ts` 覆盖 happy path + 1 个 schema 失败。
+6. 在 `core/status/detector.ts` 决策树里加判定（基于 JSON canonical 文件的存在性，不要基于 MD）。
+7. 至少一个 `tests/<asset>-schemas.test.ts` 覆盖 happy path + 1 个 schema 失败。
 8. 同步更新 `docs/design/01-asset-model.md`（若 schema 有调整）。
+
+## JSON canonical + MD projection 双写约定
+
+某些资产同时有 `.json`（结构化 data）和 `.md`（人类可读）两个文件（例：worldview / powers / cheat-system / character index）。规则：
+
+- **JSON 是 source of truth**。所有 `readX` 只从 `.json` 读；`writeX` 同时落 `.json`（验后写）和 `.md`（按当前 data 重新渲染）。
+- **MD body 永不被反向解析回 data**。如果用户手动改了 .md 而没改 .json，下一次 writeX 会用 .json 的内容重新 render，覆盖 .md 改动。这是有意设计——避免双向同步的所有头疼问题。
+- MD render 函数放在 `core/assets/<asset>-render.ts`，与 IO 分离。Render 函数纯函数（input data → string），无副作用、无 IO。
+- MD frontmatter 里的 `status` 字段是唯一例外——可以独立翻转（`writeX` 的 `status` 参数控制），但仍由 writeX 统一处理，不允许直接编辑 .md。
+
+## tag-like 字段 vs behavioral enum：何时用 lenient string？
+
+Zod schema 设计里有个反复出现的取舍：某个字段是用 `z.enum([...])` 还是 `z.string().min(1)`？
+
+**用 strict enum 的判据**：下游代码（SKILL prompt / audit 维度 / writer 行为）会基于这个值**分支**。例：
+
+- `FactionStance` (ally/antagonist/neutral/fringe) — 关系网生成会按此选边
+- `CheatType` (analyzer/system/...) — chapter-writer 写金手指出场时按此选模板
+- `BeatType` (first-use/comeback/...) — outline-architect 安章节会按此映射节拍
+- `LimitCategory` — R2 校验直接 grep 这些值
+
+**用 lenient string + KNOWN_* 常量的判据**：值是 flavor / 描述性 / 题材特异，下游代码只是把它显示出来，不分支。例：
+
+- `Genre` / `Platform` — 网文有大量小众分类，硬枚举会卡真实数据
+- `Epoch` (ancient/middle-ancient/...) — 不同题材的时代命名不一样
+- `Faction.type` (sect/kingdom/cult/...) — 都市文可能是 `corp`，仙侠是 `sect`，太多了枚不完
+
+⚠️ **不确定时倾向 strict**——以后要放宽很容易（改一行 schema），收紧难（要迁移现有数据）。
 
 ## 测试
 
@@ -104,6 +132,7 @@ src/
 - 不要在测试里调用真实 LLM。需要 LLM 时用 `MockProvider` + `enqueue(...)` 喂 canned response。
 - 每个测试用 `makeTmpDir` / `rmTmpDir` 隔离文件系统。绝不在 `os.tmpdir()` 之外写测试文件。
 - `setSkillsDir(null)` 重置 skills 加载缓存（在用 NOVEL_SKILLS_DIR 切换的测试里必须）。
+- **JSON canonical 资产测试要用真实 writeX helper，不要手写假 .md 文件**——detector 现在按 .json 存在性判 stage，假 .md 不算数。
 
 ## 与 v1 SKILL 协议的对齐
 

@@ -25,9 +25,14 @@ export interface ProjectPaths {
   };
   world: {
     dir: string;
+    /** Markdown projection (human-readable). */
     worldview: string;
+    /** JSON canonical source. */
+    worldviewJson: string;
     cheatSystem: string;
+    cheatSystemJson: string;
     powers: string;
+    powersJson: string;
   };
   characters: {
     dir: string;
@@ -78,8 +83,11 @@ export function projectPaths(root: string): ProjectPaths {
     world: {
       dir: join(r, 'world'),
       worldview: join(r, 'world', 'worldview.md'),
+      worldviewJson: join(r, 'world', 'worldview.json'),
       cheatSystem: join(r, 'world', 'cheat-system.md'),
+      cheatSystemJson: join(r, 'world', 'cheat-system.json'),
       powers: join(r, 'world', 'powers.md'),
+      powersJson: join(r, 'world', 'powers.json'),
     },
     characters: {
       dir: join(r, 'characters'),

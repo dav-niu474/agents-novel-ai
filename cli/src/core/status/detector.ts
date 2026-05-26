@@ -9,10 +9,14 @@
  */
 import { existsSync, statSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
-import { join } from 'node:path';
 import { readBlueprint } from '../assets/blueprint.js';
 import { readNovel } from '../assets/novel.js';
 import { projectPaths } from '../assets/paths.js';
+import {
+  cheatSystemExists,
+  powersExists,
+  worldviewExists,
+} from '../assets/world.js';
 import type { Novel } from '../schemas/novel.js';
 
 export type Stage =
@@ -20,7 +24,12 @@ export type Stage =
   | 'inspiration'
   | 'blueprint-drafting'
   | 'blueprint-approved'
-  | 'world-building'
+  // Worldforge substages — alpha-2a granularity
+  | 'world-worldview'
+  | 'world-powers'
+  | 'world-cheat-system'
+  | 'world-approve'
+  // Downstream stages (alpha-2b+)
   | 'characters'
   | 'outline-master'
   | 'outline-volume'
@@ -61,6 +70,8 @@ function safeIsFile(p: string): boolean {
   }
 }
 
+type AssetStatusLite = 'missing' | 'drafting' | 'approved' | 'archived';
+
 export async function detectStatus(root: string | null): Promise<StatusReport> {
   if (!root) {
     return {
@@ -83,36 +94,45 @@ export async function detectStatus(root: string | null): Promise<StatusReport> {
 
   // Asset existence checks (file-first, novel.json fields ignored on purpose).
   const hasBlueprint = safeIsFile(p.blueprintMd);
-  const hasWorldview = safeIsFile(p.world.worldview);
-  const hasCheatSystem = safeIsFile(p.world.cheatSystem);
+  const hasWorldview = worldviewExists(root);
+  const hasPowers = powersExists(root);
+  const hasCheatSystem = cheatSystemExists(root);
   const hasCharIndex = safeIsFile(p.characters.index);
   const hasOutlineMaster = safeIsFile(p.outline.master);
   const volumeCount = await countFilesIn(p.outline.volumes);
   const chapterOutlineCount = await countFilesIn(p.outline.chapters);
   const chapterCount = await countFilesIn(p.chapters.dir);
 
-  let blueprintStatus: 'missing' | 'drafting' | 'approved' | 'archived' = 'missing';
+  // Blueprint status (gate for moving past inspiration stage).
+  let blueprintStatus: AssetStatusLite = 'missing';
   if (hasBlueprint) {
     try {
       const bp = await readBlueprint(root);
-      blueprintStatus =
-        bp.frontmatter.status === 'approved'
-          ? 'approved'
-          : bp.frontmatter.status === 'archived'
-            ? 'archived'
-            : 'drafting';
+      const s = bp.frontmatter.status;
+      blueprintStatus = s === 'approved' ? 'approved' : s === 'archived' ? 'archived' : 'drafting';
     } catch {
       blueprintStatus = 'drafting';
     }
   }
 
+  // World asset presence (status field comes from MD frontmatter; we don't read
+  // it here because alpha-2a treats JSON presence as the gate for stage advance).
+  // alpha-2a's `novel world approve` flips status to 'approved'; future alpha
+  // iterations may upgrade this detector to also gate on status.
+
   // Stage decision tree (mirrors studio SKILL §3.B table).
   let stage: Stage;
   if (!hasBlueprint || blueprintStatus !== 'approved') {
     stage = blueprintStatus === 'drafting' ? 'blueprint-drafting' : 'inspiration';
-  } else if (!hasWorldview || !hasCheatSystem) {
-    stage = 'world-building';
+  } else if (!hasWorldview) {
+    stage = 'world-worldview';
+  } else if (!hasPowers) {
+    stage = 'world-powers';
+  } else if (!hasCheatSystem) {
+    stage = 'world-cheat-system';
   } else if (!hasCharIndex) {
+    // All 3 world assets present. character-atelier is alpha-2b, so we point
+    // user at `novel world approve` if any asset is still drafting (best-effort).
     stage = 'characters';
   } else if (!hasOutlineMaster) {
     stage = 'outline-master';
@@ -131,6 +151,7 @@ export async function detectStatus(root: string | null): Promise<StatusReport> {
     hasBlueprint,
     blueprintStatus,
     hasWorldview,
+    hasPowers,
     hasCheatSystem,
     hasCharIndex,
     hasOutlineMaster,
@@ -145,8 +166,9 @@ export async function detectStatus(root: string | null): Promise<StatusReport> {
 
 interface Counts {
   hasBlueprint: boolean;
-  blueprintStatus: 'missing' | 'drafting' | 'approved' | 'archived';
+  blueprintStatus: AssetStatusLite;
   hasWorldview: boolean;
+  hasPowers: boolean;
   hasCheatSystem: boolean;
   hasCharIndex: boolean;
   hasOutlineMaster: boolean;
@@ -155,22 +177,26 @@ interface Counts {
   chapterCount: number;
 }
 
+const STAGE_LABEL: Record<Stage, string> = {
+  'no-project': '无项目',
+  inspiration: '灵感期',
+  'blueprint-drafting': '开书蓝图（撰写中）',
+  'blueprint-approved': '开书蓝图（已定稿）',
+  'world-worldview': '建世界（worldview）',
+  'world-powers': '建世界（powers 力量等级）',
+  'world-cheat-system': '建世界（cheat-system 金手指）',
+  'world-approve': '建世界（待 approve）',
+  characters: '角色人设',
+  'outline-master': '总纲',
+  'outline-volume': '卷纲',
+  'outline-chapters': '章纲',
+  writing: '写作期',
+  completed: '完结',
+};
+
 function buildHeadline(novel: Novel, stage: Stage, chapterCount: number): string {
-  const stageLabel: Record<Stage, string> = {
-    'no-project': '无项目',
-    inspiration: '灵感期',
-    'blueprint-drafting': '开书蓝图（撰写中）',
-    'blueprint-approved': '开书蓝图（已定稿）',
-    'world-building': '建世界 / 金手指',
-    characters: '角色人设',
-    'outline-master': '总纲',
-    'outline-volume': '卷纲',
-    'outline-chapters': '章纲',
-    writing: '写作期',
-    completed: '完结',
-  };
   const target = novel.target_chapters ?? '?';
-  return `《${novel.title}》· 阶段：${stageLabel[stage]}（已写 ${chapterCount} / 目标 ${target} 章）`;
+  return `《${novel.title}》· 阶段：${STAGE_LABEL[stage]}（已写 ${chapterCount} / 目标 ${target} 章）`;
 }
 
 function buildDetails(novel: Novel, c: Counts): string[] {
@@ -180,7 +206,11 @@ function buildDetails(novel: Novel, c: Counts): string[] {
   out.push(`平台：${novel.platform_target.join(', ')}`);
   out.push('');
   out.push(`蓝图：${c.hasBlueprint ? c.blueprintStatus : '未创建'}`);
-  out.push(`世界观：${c.hasWorldview ? '✓' : '✗'}  金手指：${c.hasCheatSystem ? '✓' : '✗'}`);
+  out.push(
+    `世界观：${c.hasWorldview ? '✓' : '✗'}  ` +
+      `力量等级：${c.hasPowers ? '✓' : '✗'}  ` +
+      `金手指：${c.hasCheatSystem ? '✓' : '✗'}`,
+  );
   out.push(`角色索引：${c.hasCharIndex ? '✓' : '✗'}`);
   out.push(`总纲：${c.hasOutlineMaster ? '✓' : '✗'}`);
   out.push(`卷纲数：${c.volumeCount}  章纲数：${c.chapterOutlineCount}`);
@@ -211,21 +241,46 @@ function buildNextSteps(stage: Stage): NextStep[] {
         },
       ];
     case 'blueprint-approved':
-    case 'world-building':
+    case 'world-worldview':
       return [
         {
-          title: '建世界观 + 金手指（alpha-2 实现）',
+          title: '建世界观（worldview）',
+          command: 'novel world build',
+          skill: 'novel-worldforge',
+        },
+      ];
+    case 'world-powers':
+      return [
+        {
+          title: '继续建力量等级（powers）',
+          command: 'novel world build --resume',
+          skill: 'novel-worldforge',
+        },
+      ];
+    case 'world-cheat-system':
+      return [
+        {
+          title: '继续建金手指（cheat-system）',
+          command: 'novel world build --resume',
+          skill: 'novel-worldforge',
+        },
+      ];
+    case 'world-approve':
+      return [
+        {
+          title: '把世界三件套标记为 approved',
+          command: 'novel world approve',
           skill: 'novel-worldforge',
         },
       ];
     case 'characters':
-      return [{ title: '设计角色（alpha-2 实现）', skill: 'novel-character-atelier' }];
+      return [{ title: '设计角色（alpha-2b 实现）', skill: 'novel-character-atelier' }];
     case 'outline-master':
     case 'outline-volume':
     case 'outline-chapters':
-      return [{ title: '写大纲 / 章纲（alpha-2 实现）', skill: 'novel-outline-architect' }];
+      return [{ title: '写大纲 / 章纲（alpha-2c 实现）', skill: 'novel-outline-architect' }];
     case 'writing':
-      return [{ title: '写下一章（alpha-2 实现）', skill: 'novel-chapter-writer' }];
+      return [{ title: '写下一章（alpha-2d 实现）', skill: 'novel-chapter-writer' }];
     case 'completed':
       return [{ title: '导出全书（alpha-3 实现）', command: 'novel export --format md' }];
     case 'no-project':

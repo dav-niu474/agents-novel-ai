@@ -1,7 +1,7 @@
 {
   "name": "@novel-studio/cli",
-  "version": "0.2.0-alpha.1",
-  "description": "Novel Studio CLI — AI-powered Chinese web novel writing pipeline. v2 alpha-1: init / status / doctor / config / blueprint.",
+  "version": "0.2.0-alpha.2",
+  "description": "Novel Studio CLI — AI-powered Chinese web novel writing pipeline. v2 alpha-2a: + worldforge (worldview / powers / cheat-system).",
   "type": "module",
   "license": "MIT",
   "engines": {
