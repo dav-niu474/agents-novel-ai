@@ -10,6 +10,7 @@
 import { existsSync, statSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import { readBlueprint } from '../assets/blueprint.js';
+import { charactersStatus, type CharactersStatus } from '../assets/character.js';
 import { readNovel } from '../assets/novel.js';
 import { projectPaths } from '../assets/paths.js';
 import {
@@ -29,8 +30,11 @@ export type Stage =
   | 'world-powers'
   | 'world-cheat-system'
   | 'world-approve'
-  // Downstream stages (alpha-2b+)
-  | 'characters'
+  // Characters substages — alpha-2b granularity
+  | 'characters-empty'
+  | 'characters-protagonist'
+  | 'characters-grow'
+  // Downstream stages (alpha-2c+)
   | 'outline-master'
   | 'outline-volume'
   | 'outline-chapters'
@@ -97,7 +101,7 @@ export async function detectStatus(root: string | null): Promise<StatusReport> {
   const hasWorldview = worldviewExists(root);
   const hasPowers = powersExists(root);
   const hasCheatSystem = cheatSystemExists(root);
-  const hasCharIndex = safeIsFile(p.characters.index);
+  const charsStatus = await charactersStatus(root);
   const hasOutlineMaster = safeIsFile(p.outline.master);
   const volumeCount = await countFilesIn(p.outline.volumes);
   const chapterOutlineCount = await countFilesIn(p.outline.chapters);
@@ -130,10 +134,15 @@ export async function detectStatus(root: string | null): Promise<StatusReport> {
     stage = 'world-powers';
   } else if (!hasCheatSystem) {
     stage = 'world-cheat-system';
-  } else if (!hasCharIndex) {
-    // All 3 world assets present. character-atelier is alpha-2b, so we point
-    // user at `novel world approve` if any asset is still drafting (best-effort).
-    stage = 'characters';
+  } else if (!charsStatus.hasIndex) {
+    // World 三件套齐了，但角色索引还没创建。
+    stage = 'characters-empty';
+  } else if (!charsStatus.ready) {
+    // Index 存在但缺主角卡（或主角条目指向的文件不存在）。
+    stage = 'characters-protagonist';
+  } else if (charsStatus.totalCount < 5) {
+    // 主角已就绪但还差关键反派 / 配角（SKILL R6：先少后多，5-7 个起步）。
+    stage = 'characters-grow';
   } else if (!hasOutlineMaster) {
     stage = 'outline-master';
   } else if (volumeCount === 0) {
@@ -153,7 +162,7 @@ export async function detectStatus(root: string | null): Promise<StatusReport> {
     hasWorldview,
     hasPowers,
     hasCheatSystem,
-    hasCharIndex,
+    chars: charsStatus,
     hasOutlineMaster,
     volumeCount,
     chapterOutlineCount,
@@ -170,7 +179,7 @@ interface Counts {
   hasWorldview: boolean;
   hasPowers: boolean;
   hasCheatSystem: boolean;
-  hasCharIndex: boolean;
+  chars: CharactersStatus;
   hasOutlineMaster: boolean;
   volumeCount: number;
   chapterOutlineCount: number;
@@ -186,7 +195,9 @@ const STAGE_LABEL: Record<Stage, string> = {
   'world-powers': '建世界（powers 力量等级）',
   'world-cheat-system': '建世界（cheat-system 金手指）',
   'world-approve': '建世界（待 approve）',
-  characters: '角色人设',
+  'characters-empty': '角色人设（待创建索引）',
+  'characters-protagonist': '角色人设（待捏主角）',
+  'characters-grow': '角色人设（补反派 / 配角）',
   'outline-master': '总纲',
   'outline-volume': '卷纲',
   'outline-chapters': '章纲',
@@ -211,7 +222,7 @@ function buildDetails(novel: Novel, c: Counts): string[] {
       `力量等级：${c.hasPowers ? '✓' : '✗'}  ` +
       `金手指：${c.hasCheatSystem ? '✓' : '✗'}`,
   );
-  out.push(`角色索引：${c.hasCharIndex ? '✓' : '✗'}`);
+  out.push(`角色索引：${c.chars.hasIndex ? '✓' : '✗'}  主角卡：${c.chars.hasProtagonist ? '✓' : '✗'}  共 ${c.chars.totalCount} 个角色（主 ${c.chars.protagonistCount} / 反 ${c.chars.antagonistCount} / 配 ${c.chars.supportingCount} / 次 ${c.chars.minorCount}）`);
   out.push(`总纲：${c.hasOutlineMaster ? '✓' : '✗'}`);
   out.push(`卷纲数：${c.volumeCount}  章纲数：${c.chapterOutlineCount}`);
   out.push(`已写章节数：${c.chapterCount}`);
@@ -273,8 +284,40 @@ function buildNextSteps(stage: Stage): NextStep[] {
           skill: 'novel-worldforge',
         },
       ];
-    case 'characters':
-      return [{ title: '设计角色（alpha-2b 实现）', skill: 'novel-character-atelier' }];
+    case 'characters-empty':
+      return [
+        {
+          title: '捏主角（创建第一张角色卡 + 索引）',
+          command: 'novel character add --role protagonist',
+          skill: 'novel-character-atelier',
+        },
+      ];
+    case 'characters-protagonist':
+      return [
+        {
+          title: '主角索引存在但卡片缺失，重新创建主角卡',
+          command: 'novel character add --role protagonist',
+          skill: 'novel-character-atelier',
+        },
+      ];
+    case 'characters-grow':
+      return [
+        {
+          title: '加早期反派（前 30 章会出现）',
+          command: 'novel character add --role antagonist --tier early',
+          skill: 'novel-character-atelier',
+        },
+        {
+          title: '加核心配角',
+          command: 'novel character add --role supporting --tier core',
+          skill: 'novel-character-atelier',
+        },
+        {
+          title: '把已有角色全部 approve（性格内核锁定）',
+          command: 'novel character approve',
+          skill: 'novel-character-atelier',
+        },
+      ];
     case 'outline-master':
     case 'outline-volume':
     case 'outline-chapters':

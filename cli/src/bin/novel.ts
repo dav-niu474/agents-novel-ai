@@ -22,6 +22,14 @@ import {
   blueprintStart,
 } from '../commands/blueprint.js';
 import {
+  characterAdd,
+  characterApprove,
+  characterList,
+  characterShow,
+  parseRole,
+  parseTier,
+} from '../commands/character.js';
+import {
   configGet,
   configList,
   configSet,
@@ -43,7 +51,7 @@ import { chalk, log } from '../core/utils/logger.js';
 // CLI version — keep in sync with package.json. Hardcoded to avoid runtime
 // JSON import quirks under NodeNext + ESM.
 // -------------------------------------------------------------------------
-const CLI_VERSION = '0.2.0-alpha.2';
+const CLI_VERSION = '0.2.0-alpha.3';
 
 // -------------------------------------------------------------------------
 // Build the program
@@ -54,7 +62,7 @@ function buildProgram(): Command {
 
   program
     .name('novel')
-    .description('Novel Studio CLI — AI 全流程网文写作工作室（v2 alpha-2a）')
+    .description('Novel Studio CLI — AI 全流程网文写作工作室（v2 alpha-2b）')
     .version(CLI_VERSION, '-v, --version')
     .option('-q, --quiet', '抑制非关键输出')
     .option('--debug', '打开 debug 日志');
@@ -232,6 +240,62 @@ function buildProgram(): Command {
     .description('校验三件套（含 R2 强约束）+ 把三个 .md 的 status 翻成 approved')
     .action(async () => {
       await worldApprove();
+    });
+
+  // ---------- novel character ... ----------
+  const character = program
+    .command('character')
+    .description('角色 / 人设 CRUD + 交互式 add 工作流（protagonist / antagonist / supporting / minor）');
+
+  character
+    .command('list')
+    .description('紧凑表格显示全部角色（按 role 分组 + tier + 首登场章节）')
+    .action(async () => {
+      await characterList();
+    });
+
+  character
+    .command('show <id-or-name>')
+    .description('打印某个角色的整张卡（id 形如 protagonist-lin-jin，或角色名子串）')
+    .action(async (idOrName: string) => {
+      await characterShow(idOrName);
+    });
+
+  character
+    .command('add')
+    .description('交互式捏一个角色（pick role + tier → LLM 起草 8 字段 → 写卡 + 更新索引）')
+    .option('--role <role>', '角色定位（protagonist / antagonist / supporting / minor）')
+    .option('--tier <tier>', '角色 tier（antagonist: early/mid/late/meta；supporting: core/important/minor）')
+    .option('--name <name>', '角色名（可中文）')
+    .option('--first-chapter <n>', '首次登场章节号', (v) => Number.parseInt(v, 10))
+    .option('--hint <text>', '初始想法 / 偏好（注入到 LLM prompt）')
+    .option('--no-llm', '完全不调用 LLM，编辑器模式手填')
+    .option('--mock-llm', '使用 mock provider（离线测试用）')
+    .option('--force', '强制覆盖已存在的同 id 角色卡')
+    .action(async (cmdOpts) => {
+      const role = parseRole(cmdOpts.role);
+      const tier = parseTier(role, cmdOpts.tier);
+      await characterAdd({
+        ...(role !== undefined ? { role } : {}),
+        ...(tier !== undefined ? { tier } : {}),
+        ...(cmdOpts.name !== undefined ? { name: cmdOpts.name } : {}),
+        ...(cmdOpts.firstChapter !== undefined && !Number.isNaN(cmdOpts.firstChapter)
+          ? { firstAppearChapter: cmdOpts.firstChapter }
+          : {}),
+        ...(cmdOpts.hint !== undefined ? { hint: cmdOpts.hint } : {}),
+        ...(cmdOpts.llm === false ? { noLLM: true } : {}),
+        ...(cmdOpts.mockLlm !== undefined ? { mockLLM: cmdOpts.mockLlm } : {}),
+        ...(cmdOpts.force !== undefined ? { force: cmdOpts.force } : {}),
+      });
+    });
+
+  character
+    .command('approve [id]')
+    .description('把角色卡 status 翻成 approved（性格内核锁定）；不带 id 时 approve 所有 drafting 卡')
+    .action(async (id: string | undefined) => {
+      await characterApprove({
+        ...(id !== undefined ? { id } : {}),
+      });
     });
 
   return program;

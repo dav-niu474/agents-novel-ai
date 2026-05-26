@@ -99,8 +99,8 @@ describe('write* roundtrip', () => {
     expect(written.version).toBe(2); // first save bumps to 2 (alpha-1 pattern)
 
     const p = projectPaths(dir);
-    expect(existsSync(p.worldviewJson)).toBe(true);
-    expect(existsSync(p.worldview)).toBe(true);
+    expect(existsSync(p.world.worldviewJson)).toBe(true);
+    expect(existsSync(p.world.worldview)).toBe(true);
 
     const back = await readWorldview(dir);
     expect(back.version).toBe(2);
@@ -113,8 +113,8 @@ describe('write* roundtrip', () => {
     expect(written.version).toBe(2);
 
     const p = projectPaths(dir);
-    expect(existsSync(p.powersJson)).toBe(true);
-    expect(existsSync(p.powers)).toBe(true);
+    expect(existsSync(p.world.powersJson)).toBe(true);
+    expect(existsSync(p.world.powers)).toBe(true);
 
     const back = await readPowers(dir);
     expect(back.data.system_name).toBe(initial.data.system_name);
@@ -132,8 +132,8 @@ describe('write* roundtrip', () => {
     expect(cs2Written.asset_id).toBe('cheat-renamed-skill');
 
     const p = projectPaths(dir);
-    expect(existsSync(p.cheatSystemJson)).toBe(true);
-    expect(existsSync(p.cheatSystem)).toBe(true);
+    expect(existsSync(p.world.cheatSystemJson)).toBe(true);
+    expect(existsSync(p.world.cheatSystem)).toBe(true);
   });
 
   it('writeWorldview with status="approved" produces approved frontmatter', async () => {
@@ -141,7 +141,7 @@ describe('write* roundtrip', () => {
     // We can't easily read .md frontmatter without re-importing readMarkdownAsset,
     // but reading JSON should still work and the MD file must exist.
     const p = projectPaths(dir);
-    expect(existsSync(p.worldview)).toBe(true);
+    expect(existsSync(p.world.worldview)).toBe(true);
   });
 });
 

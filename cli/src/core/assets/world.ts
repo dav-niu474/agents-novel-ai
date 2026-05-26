@@ -40,11 +40,11 @@ import {
 // =============================================================================
 
 export function worldviewExists(root: string): boolean {
-  return existsSync(projectPaths(root).worldviewJson);
+  return existsSync(projectPaths(root).world.worldviewJson);
 }
 
 export async function readWorldview(root: string): Promise<TWorldview> {
-  return readJsonAsset(projectPaths(root).worldviewJson, Worldview);
+  return readJsonAsset(projectPaths(root).world.worldviewJson, Worldview);
 }
 
 /**
@@ -65,8 +65,8 @@ export async function writeWorldview(
     version: worldview.version + 1,
   };
   const p = projectPaths(root);
-  await writeJsonAsset(p.worldviewJson, Worldview, next);
-  await writeMarkdownAsset(p.worldview, WorldviewFrontmatter, {
+  await writeJsonAsset(p.world.worldviewJson, Worldview, next);
+  await writeMarkdownAsset(p.world.worldview, WorldviewFrontmatter, {
     frontmatter: WorldviewFrontmatter.parse({
       asset_type: 'worldview',
       asset_id: 'worldview-main',
@@ -110,11 +110,11 @@ export function buildInitialWorldview(): TWorldview {
 // =============================================================================
 
 export function powersExists(root: string): boolean {
-  return existsSync(projectPaths(root).powersJson);
+  return existsSync(projectPaths(root).world.powersJson);
 }
 
 export async function readPowers(root: string): Promise<TPowers> {
-  return readJsonAsset(projectPaths(root).powersJson, Powers);
+  return readJsonAsset(projectPaths(root).world.powersJson, Powers);
 }
 
 export async function writePowers(
@@ -128,8 +128,8 @@ export async function writePowers(
     version: powers.version + 1,
   };
   const p = projectPaths(root);
-  await writeJsonAsset(p.powersJson, Powers, next);
-  await writeMarkdownAsset(p.powers, PowersFrontmatter, {
+  await writeJsonAsset(p.world.powersJson, Powers, next);
+  await writeMarkdownAsset(p.world.powers, PowersFrontmatter, {
     frontmatter: PowersFrontmatter.parse({
       asset_type: 'powers',
       asset_id: 'powers-main',
@@ -171,11 +171,11 @@ export function buildInitialPowers(): TPowers {
 // =============================================================================
 
 export function cheatSystemExists(root: string): boolean {
-  return existsSync(projectPaths(root).cheatSystemJson);
+  return existsSync(projectPaths(root).world.cheatSystemJson);
 }
 
 export async function readCheatSystem(root: string): Promise<TCheatSystem> {
-  return readJsonAsset(projectPaths(root).cheatSystemJson, CheatSystem);
+  return readJsonAsset(projectPaths(root).world.cheatSystemJson, CheatSystem);
 }
 
 export async function writeCheatSystem(
@@ -192,8 +192,8 @@ export async function writeCheatSystem(
     version: cs.version + 1,
   };
   const p = projectPaths(root);
-  await writeJsonAsset(p.cheatSystemJson, CheatSystem, next);
-  await writeMarkdownAsset(p.cheatSystem, CheatSystemFrontmatter, {
+  await writeJsonAsset(p.world.cheatSystemJson, CheatSystem, next);
+  await writeMarkdownAsset(p.world.cheatSystem, CheatSystemFrontmatter, {
     frontmatter: CheatSystemFrontmatter.parse({
       asset_type: 'cheat-system',
       asset_id: expectedId,
