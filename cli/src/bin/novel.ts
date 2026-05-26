@@ -8,6 +8,7 @@
  *   novel doctor            commands/doctor.ts
  *   novel config <op> ...   commands/config.ts
  *   novel blueprint <op>    commands/blueprint.ts
+ *   novel world <op>        commands/world.ts
  *
  * Errors:
  *   - NovelError → friendly chalk-red message + optional hint, exit code 1+
@@ -29,6 +30,12 @@ import {
 import { runDoctor } from '../commands/doctor.js';
 import { runInit } from '../commands/init.js';
 import { runStatus } from '../commands/status.js';
+import {
+  worldApprove,
+  worldBuild,
+  worldList,
+  worldShow,
+} from '../commands/world.js';
 import { NovelError } from '../core/utils/errors.js';
 import { chalk, log } from '../core/utils/logger.js';
 
@@ -36,7 +43,7 @@ import { chalk, log } from '../core/utils/logger.js';
 // CLI version — keep in sync with package.json. Hardcoded to avoid runtime
 // JSON import quirks under NodeNext + ESM.
 // -------------------------------------------------------------------------
-const CLI_VERSION = '0.2.0-alpha.1';
+const CLI_VERSION = '0.2.0-alpha.2';
 
 // -------------------------------------------------------------------------
 // Build the program
@@ -47,7 +54,7 @@ function buildProgram(): Command {
 
   program
     .name('novel')
-    .description('Novel Studio CLI — AI 全流程网文写作工作室（v2 alpha-1）')
+    .description('Novel Studio CLI — AI 全流程网文写作工作室（v2 alpha-2a）')
     .version(CLI_VERSION, '-v, --version')
     .option('-q, --quiet', '抑制非关键输出')
     .option('--debug', '打开 debug 日志');
@@ -183,6 +190,48 @@ function buildProgram(): Command {
     .description('把 blueprint.md status 标为 approved + 同步 novel.json')
     .action(async () => {
       await blueprintApprove();
+    });
+
+  // ---------- novel world ... ----------
+  const world = program
+    .command('world')
+    .description('世界三件套 CRUD + 交互式 build 工作流（worldview / powers / cheat-system）');
+
+  world
+    .command('show [asset]')
+    .description('打印 world 资产内容；asset 可选 worldview / powers / cheat-system / all（默认 all）')
+    .action(async (asset: string | undefined) => {
+      await worldShow(asset ?? 'all');
+    });
+
+  world
+    .command('list')
+    .description('紧凑表格显示三件套存在性 + status + version')
+    .action(async () => {
+      await worldList();
+    });
+
+  world
+    .command('build')
+    .description('启动 3 步建世界工作流（worldview → powers → cheat-system，每步可选 LLM 起草 / 编辑器 / 跳过）')
+    .option('--resume', '只填还缺或仍是占位的资产')
+    .option('--hint <text>', '初始想法 / 偏好（会注入到每步的 LLM prompt）')
+    .option('--no-llm', '完全不调用 LLM，编辑器模式手填')
+    .option('--mock-llm', '使用 mock provider（离线测试用）')
+    .action(async (cmdOpts) => {
+      await worldBuild({
+        ...(cmdOpts.resume !== undefined ? { resume: cmdOpts.resume } : {}),
+        ...(cmdOpts.hint !== undefined ? { hint: cmdOpts.hint } : {}),
+        ...(cmdOpts.llm === false ? { noLLM: true } : {}),
+        ...(cmdOpts.mockLlm !== undefined ? { mockLLM: cmdOpts.mockLlm } : {}),
+      });
+    });
+
+  world
+    .command('approve')
+    .description('校验三件套（含 R2 强约束）+ 把三个 .md 的 status 翻成 approved')
+    .action(async () => {
+      await worldApprove();
     });
 
   return program;

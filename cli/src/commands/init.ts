@@ -8,6 +8,12 @@ import { confirm, select, checkbox, input } from '@inquirer/prompts';
 import { buildInitialNovel } from '../core/assets/novel.js';
 import { findProjectRoot } from '../core/assets/paths.js';
 import { scaffoldProject } from '../core/assets/scaffold.js';
+import {
+  KNOWN_AUDIENCES,
+  KNOWN_GENRES,
+  KNOWN_PLATFORMS,
+  type Audience,
+} from '../core/schemas/novel.js';
 import { NovelError } from '../core/utils/errors.js';
 import { ensureDir } from '../core/utils/fs.js';
 import { log } from '../core/utils/logger.js';
@@ -15,11 +21,11 @@ import { log } from '../core/utils/logger.js';
 export interface InitOptions {
   /** Optional positional book name. Falls back to interactive prompt. */
   name?: string;
-  /** --genre xuanhuan,xianxia */
+  /** --genre xuanhuan,xianxia (custom values allowed; warns if unknown) */
   genre?: string;
-  /** --platform qidian,fanqie */
+  /** --platform qidian,fanqie (custom values allowed; warns if unknown) */
   platform?: string;
-  /** --audience male-young-adult */
+  /** --audience male-young-adult (strict enum) */
   audience?: string;
   /** --in <dir> creates the project at <dir> instead of cwd. */
   inDir?: string;
@@ -29,47 +35,41 @@ export interface InitOptions {
   yes?: boolean;
 }
 
-const GENRE_CHOICES = [
-  { value: 'xuanhuan', name: '玄幻' },
-  { value: 'xianxia', name: '仙侠' },
-  { value: 'urban', name: '都市' },
-  { value: 'lishi', name: '历史' },
-  { value: 'kehuan', name: '科幻' },
-  { value: 'moshi', name: '末世' },
-  { value: 'youxi', name: '游戏' },
-  { value: 'wuxianliu', name: '无限流' },
-  { value: 'yanqing', name: '言情' },
-  { value: 'lingyi', name: '灵异' },
-  { value: 'other', name: '其他' },
-] as const;
-
-const PLATFORM_CHOICES = [
-  { value: 'qidian', name: '起点' },
-  { value: 'fanqie', name: '番茄' },
-  { value: 'jinjiang', name: '晋江' },
-  { value: 'ciweimao', name: '刺猬猫' },
-  { value: 'zhihu', name: '知乎盐选' },
-  { value: 'other', name: '其他' },
-] as const;
-
-const AUDIENCE_CHOICES = [
-  { value: 'male-young-adult', name: '男频青年向' },
-  { value: 'male-middle', name: '男频中年向' },
-  { value: 'female-young-adult', name: '女频青年向' },
-  { value: 'female-middle', name: '女频中年向' },
-  { value: 'mixed', name: '不限性别' },
-  { value: '', name: '不确定' },
-] as const;
-
-function parseList<T>(raw: string | undefined, allowed: ReadonlyArray<T>, label: string): T[] {
+/**
+ * Parse a comma-separated list. For lenient fields (genre/platform), we accept
+ * any non-empty string but warn when the value isn't in the KNOWN list, so
+ * users notice typos but aren't blocked from custom subgenres.
+ */
+function parseLenientList(
+  raw: string | undefined,
+  known: ReadonlyArray<{ value: string }>,
+  label: string,
+): string[] {
   if (!raw) return [];
-  const parts = raw.split(',').map((s) => s.trim()).filter(Boolean);
+  const parts = raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const knownValues = new Set(known.map((k) => k.value));
   for (const p of parts) {
-    if (!(allowed as readonly unknown[]).includes(p)) {
-      throw new NovelError(`非法 ${label}: ${p}（允许：${allowed.join(', ')}）`);
+    if (!knownValues.has(p)) {
+      log.warn(`${label} 「${p}」不在常见列表中（允许，仅提醒）。常见值：${[...knownValues].join(', ')}`);
     }
   }
-  return parts as T[];
+  return parts;
+}
+
+/** Strict variant for fields with a closed enum (audience). */
+function parseStrictValue(
+  raw: string | undefined,
+  allowed: ReadonlyArray<string>,
+  label: string,
+): string | undefined {
+  if (raw === undefined) return undefined;
+  if (!allowed.includes(raw)) {
+    throw new NovelError(`非法 ${label}: ${raw}（允许：${allowed.join(', ')}）`);
+  }
+  return raw;
 }
 
 export async function runInit(opts: InitOptions): Promise<void> {
@@ -100,40 +100,35 @@ export async function runInit(opts: InitOptions): Promise<void> {
   }
   title = title.trim();
 
-  // Resolve genres.
-  const allowedGenres = GENRE_CHOICES.map((c) => c.value);
-  let genres = parseList(opts.genre, allowedGenres, '题材');
+  // Resolve genres (lenient: accept any non-empty string).
+  let genres = parseLenientList(opts.genre, KNOWN_GENRES, '题材');
   if (genres.length === 0 && !opts.yes) {
     genres = await checkbox({
-      message: '主题材（多选；至少 1 个）：',
-      choices: GENRE_CHOICES.map((c) => ({ value: c.value, name: c.name })),
+      message: '主题材（多选；至少 1 个；不在列表里的可以之后手动改 novel.json）：',
+      choices: KNOWN_GENRES.map((c) => ({ value: c.value, name: c.name })),
       validate: (xs) => xs.length > 0 || '至少选 1 个',
     });
   }
   if (genres.length === 0) genres = ['xuanhuan']; // CI fallback
 
-  // Resolve platforms.
-  const allowedPlatforms = PLATFORM_CHOICES.map((c) => c.value);
-  let platforms = parseList(opts.platform, allowedPlatforms, '平台');
+  // Resolve platforms (lenient).
+  let platforms = parseLenientList(opts.platform, KNOWN_PLATFORMS, '平台');
   if (platforms.length === 0 && !opts.yes) {
     platforms = await checkbox({
       message: '目标平台（多选；至少 1 个）：',
-      choices: PLATFORM_CHOICES.map((c) => ({ value: c.value, name: c.name })),
+      choices: KNOWN_PLATFORMS.map((c) => ({ value: c.value, name: c.name })),
       validate: (xs) => xs.length > 0 || '至少选 1 个',
     });
   }
   if (platforms.length === 0) platforms = ['qidian'];
 
-  // Resolve audience (optional).
-  const allowedAudiences = AUDIENCE_CHOICES.map((c) => c.value);
-  let audience: string | undefined = opts.audience;
-  if (audience !== undefined && !allowedAudiences.includes(audience as (typeof allowedAudiences)[number])) {
-    throw new NovelError(`非法 audience: ${audience}（允许：${allowedAudiences.join(', ')}）`);
-  }
+  // Resolve audience (strict enum).
+  const allowedAudiences = KNOWN_AUDIENCES.map((c) => c.value);
+  let audience: string | undefined = parseStrictValue(opts.audience, allowedAudiences, 'audience');
   if (audience === undefined && !opts.yes) {
     audience = await select({
       message: '受众（可选）：',
-      choices: AUDIENCE_CHOICES.map((c) => ({ value: c.value, name: c.name })),
+      choices: KNOWN_AUDIENCES.map((c) => ({ value: c.value, name: c.name })),
       default: '',
     });
   }
@@ -156,9 +151,9 @@ export async function runInit(opts: InitOptions): Promise<void> {
 
   const novel = buildInitialNovel({
     title,
-    genre: genres as Array<(typeof allowedGenres)[number]>,
-    platform_target: platforms as Array<(typeof allowedPlatforms)[number]>,
-    ...(audience ? { audience: audience as (typeof allowedAudiences)[number] } : {}),
+    genre: genres,
+    platform_target: platforms,
+    ...(audience ? { audience: audience as Audience } : {}),
   });
 
   const spinner = log.spinner('创建项目骨架...').start();

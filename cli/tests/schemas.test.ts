@@ -77,6 +77,18 @@ describe('Novel schema', () => {
     expect(Novel.safeParse({ ...ok, platform_target: [] }).success).toBe(false);
   });
 
+  it('accepts custom genre values not in the KNOWN_GENRES list (lenient)', () => {
+    // Real-world example: examples/tunshi-mo-di/novel.json uses "moofa" which isn't
+    // in any canonical list. Schema should still pass.
+    expect(Novel.safeParse({ ...ok, genre: ['xuanhuan', 'moofa'] }).success).toBe(true);
+    expect(Novel.safeParse({ ...ok, genre: ['totally-custom-subgenre'] }).success).toBe(true);
+  });
+
+  it('rejects empty-string genre / platform values', () => {
+    expect(Novel.safeParse({ ...ok, genre: [''] }).success).toBe(false);
+    expect(Novel.safeParse({ ...ok, platform_target: [''] }).success).toBe(false);
+  });
+
   it('NovelInitInput validates required fields', () => {
     expect(
       NovelInitInput.safeParse({
