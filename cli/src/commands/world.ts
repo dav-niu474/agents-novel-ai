@@ -105,7 +105,7 @@ export async function worldList(): Promise<void> {
     const json = await readWorldview(root);
     let mdStatus = '?';
     try {
-      const md = await readMarkdownAsset(p.worldview, WorldviewFrontmatter);
+      const md = await readMarkdownAsset(p.world.worldview, WorldviewFrontmatter);
       mdStatus = md.frontmatter.status;
     } catch {
       /* ignore */
@@ -120,7 +120,7 @@ export async function worldList(): Promise<void> {
     const json = await readPowers(root);
     let mdStatus = '?';
     try {
-      const md = await readMarkdownAsset(p.powers, PowersFrontmatter);
+      const md = await readMarkdownAsset(p.world.powers, PowersFrontmatter);
       mdStatus = md.frontmatter.status;
     } catch {
       /* ignore */
@@ -135,7 +135,7 @@ export async function worldList(): Promise<void> {
     const json = await readCheatSystem(root);
     let mdStatus = '?';
     try {
-      const md = await readMarkdownAsset(p.cheatSystem, CheatSystemFrontmatter);
+      const md = await readMarkdownAsset(p.world.cheatSystem, CheatSystemFrontmatter);
       mdStatus = md.frontmatter.status;
     } catch {
       /* ignore */
@@ -161,7 +161,8 @@ export async function worldList(): Promise<void> {
   const ws = worldStatus(root);
   log.plain('');
   if (ws.allPresent) {
-    log.success('三件套齐全。可以进入 character-atelier 阶段（alpha-2b 实现）。');
+    log.success('三件套齐全。可以进入 character-atelier 阶段。');
+    log.hint('运行 `novel character add --role protagonist` 捏主角。');
   } else {
     log.hint(`已建 ${ws.count}/3。运行 \`novel world build${ws.count > 0 ? ' --resume' : ''}\` 继续。`);
   }
@@ -220,5 +221,5 @@ export async function worldApprove(): Promise<void> {
   await writeCheatSystem(root, cs, 'approved');
 
   log.success('worldview / powers / cheat-system 已全部标记 approved');
-  log.hint('下一步：设计角色（alpha-2b 实现 `novel character ...`）');
+  log.hint('下一步：设计角色 → `novel character add --role protagonist`');
 }
