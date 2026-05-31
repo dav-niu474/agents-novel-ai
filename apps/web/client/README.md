@@ -2,7 +2,7 @@
 
 Novel Studio **Web Studio** 前端（React + Vite + TanStack Query + Tailwind）。设计见 [`../../../docs/design/05-web-studio.md`](../../../docs/design/05-web-studio.md)。
 
-**M2 范围：只读 UI** —— 书库 / 仪表盘 / 资产导航 + 阅读。消费 M1 服务端（`@novel-studio/web-server`）的只读 API。build 向导（写操作）在 M3。
+**M2 范围：只读 UI** —— 书库 / 仪表盘 / 资产导航 + 阅读。**M3 新增：建世界向导**（`/books/:id/build/world`）—— AI 起草 / 编辑 / 接受 / 跳过 / approve，写入后自动失效相关 Query 缓存。
 
 ## 运行（需要 M1 服务端同时在跑）
 

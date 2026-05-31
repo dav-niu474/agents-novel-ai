@@ -47,3 +47,35 @@ export interface OutlineStatus {
   volumeCount: number;
   chapterOutlineCount: number;
 }
+
+
+// ---- build (M3) ----
+
+export type WorldStepKey = 'worldview' | 'powers' | 'cheat-system';
+
+export interface WorldStepState {
+  key: WorldStepKey;
+  label: string;
+  exists: boolean;
+}
+
+export interface WorldBuildState {
+  steps: WorldStepState[];
+  allPresent: boolean;
+}
+
+export interface DraftResult {
+  step: WorldStepKey;
+  ok: boolean;
+  data?: unknown;
+  issues?: string[];
+  rawPreview?: string;
+}
+
+export interface BuildEvent {
+  bookId: string;
+  type: 'draft-start' | 'draft-done' | 'saved' | 'approved' | 'error';
+  step?: string;
+  ok?: boolean;
+  message?: string;
+}

@@ -10,6 +10,7 @@ import { Hono } from 'hono';
 import { readNovel } from '@novel/core/assets/novel.js';
 import { detectStatus } from '@novel/core/status/detector.js';
 import { assetRoutes } from './assets.js';
+import { buildRoutes } from './build.js';
 import { listBooks, requireBookRoot } from '../workspace.js';
 
 export function apiRoutes(workspaceRoot: string): Hono {
@@ -32,6 +33,7 @@ export function apiRoutes(workspaceRoot: string): Hono {
   });
 
   books.route('/:id/assets', assetRoutes(workspaceRoot));
+  books.route('/:id/build', buildRoutes(workspaceRoot));
 
   api.route('/books', books);
   return api;

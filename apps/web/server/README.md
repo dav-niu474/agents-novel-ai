@@ -43,3 +43,20 @@ NOVEL_WORKSPACE=./examples pnpm --filter @novel-studio/web-server dev
 - 仅监听 `127.0.0.1`，无鉴权（本地单用户）。
 - 所有读取经 `@novel/core` 的 `readX`（schema 校验）。写操作 / build 工作流不在 M1。
 - 不在前端暴露 LLM key；`/api/config` 留待配置面板里程碑（v3.7）。
+
+
+## 写工作流（M3，world 阶段）
+
+通过 `@novel/core/orchestration/world-build`（运行时无关引擎）驱动；草稿态在客户端，落盘走 core 的 `writeX`（校验 + 原子 + 渲染 MD）。
+
+| Method & Path | 说明 |
+|---|---|
+| `GET /api/books/:id/build/world` | 三步存在性（worldview / powers / cheat-system） |
+| `POST /api/books/:id/build/world/step/:key/draft` | `{ hint?, currentData?, mock? }` → LLM 起草 + Zod 校验（不落盘） |
+| `POST /api/books/:id/build/world/step/:key/accept` | `{ data }` → 校验后写入（status=drafting） |
+| `POST /api/books/:id/build/world/step/:key/skip` | 写占位骨架 |
+| `POST /api/books/:id/build/world/approve` | R2 强校验后把三件套翻 approved |
+| `GET /api/books/:id/build/events` | SSE 进度通道（draft-start / draft-done / saved / approved；非 token 流式） |
+
+> `:key` ∈ `worldview` / `powers` / `cheat-system`。`mock:true` 用 mock provider（不消耗 token）。
+> token 级流式留给章节写作（v3.4）。blueprint / character / outline 的 build 引擎是后续里程碑。

@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AssetPage } from './pages/AssetPage';
 import { BookLayout } from './pages/BookLayout';
+import { BuildWizard } from './pages/BuildWizard';
 import { Dashboard } from './pages/Dashboard';
 import { Library } from './pages/Library';
 import './index.css';
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
       { path: 'world', element: <AssetPage section="world" /> },
       { path: 'characters', element: <AssetPage section="characters" /> },
       { path: 'outline', element: <AssetPage section="outline" /> },
+      { path: 'build/world', element: <BuildWizard /> },
     ],
   },
 ]);
