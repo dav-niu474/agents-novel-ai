@@ -10,6 +10,11 @@
 import { existsSync, statSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
 import { readBlueprint } from '../assets/blueprint.js';
+import {
+  charactersStatus,
+  relationshipsExists,
+  type CharactersStatus,
+} from '../assets/character.js';
 import { readNovel } from '../assets/novel.js';
 import { projectPaths } from '../assets/paths.js';
 import {
@@ -29,8 +34,12 @@ export type Stage =
   | 'world-powers'
   | 'world-cheat-system'
   | 'world-approve'
-  // Downstream stages (alpha-2b+)
-  | 'characters'
+  // Character-atelier substages — alpha-2b granularity
+  | 'character-protagonist'
+  | 'character-antagonists'
+  | 'character-relationships'
+  | 'character-approve'
+  // Downstream stages (alpha-2c+)
   | 'outline-master'
   | 'outline-volume'
   | 'outline-chapters'
@@ -70,6 +79,27 @@ function safeIsFile(p: string): boolean {
   }
 }
 
+const EMPTY_CHARACTERS: CharactersStatus = {
+  hasIndex: false,
+  hasProtagonist: false,
+  antagonistCount: 0,
+  supportingCount: 0,
+  minorCount: 0,
+  hasRelationships: false,
+  total: 0,
+};
+
+/** Read character status without letting a corrupt index crash the detector. */
+async function safeCharactersStatus(root: string): Promise<CharactersStatus> {
+  try {
+    return await charactersStatus(root);
+  } catch {
+    // A corrupt/invalid _index.json zeroes the counts, but relationships
+    // presence is pure file-existence and shouldn't be masked by the index read.
+    return { ...EMPTY_CHARACTERS, hasRelationships: relationshipsExists(root) };
+  }
+}
+
 type AssetStatusLite = 'missing' | 'drafting' | 'approved' | 'archived';
 
 export async function detectStatus(root: string | null): Promise<StatusReport> {
@@ -97,7 +127,7 @@ export async function detectStatus(root: string | null): Promise<StatusReport> {
   const hasWorldview = worldviewExists(root);
   const hasPowers = powersExists(root);
   const hasCheatSystem = cheatSystemExists(root);
-  const hasCharIndex = safeIsFile(p.characters.index);
+  const chars = await safeCharactersStatus(root);
   const hasOutlineMaster = safeIsFile(p.outline.master);
   const volumeCount = await countFilesIn(p.outline.volumes);
   const chapterOutlineCount = await countFilesIn(p.outline.chapters);
@@ -115,12 +145,9 @@ export async function detectStatus(root: string | null): Promise<StatusReport> {
     }
   }
 
-  // World asset presence (status field comes from MD frontmatter; we don't read
-  // it here because alpha-2a treats JSON presence as the gate for stage advance).
-  // alpha-2a's `novel world approve` flips status to 'approved'; future alpha
-  // iterations may upgrade this detector to also gate on status.
-
-  // Stage decision tree (mirrors studio SKILL §3.B table).
+  // Stage decision tree (mirrors studio SKILL §3.B table). Like alpha-2a, the
+  // *-approve substages are kept in the type for symmetry but the detector
+  // advances on file presence; `novel character list` nudges toward approve.
   let stage: Stage;
   if (!hasBlueprint || blueprintStatus !== 'approved') {
     stage = blueprintStatus === 'drafting' ? 'blueprint-drafting' : 'inspiration';
@@ -130,10 +157,14 @@ export async function detectStatus(root: string | null): Promise<StatusReport> {
     stage = 'world-powers';
   } else if (!hasCheatSystem) {
     stage = 'world-cheat-system';
-  } else if (!hasCharIndex) {
-    // All 3 world assets present. character-atelier is alpha-2b, so we point
-    // user at `novel world approve` if any asset is still drafting (best-effort).
-    stage = 'characters';
+  } else if (!chars.hasProtagonist) {
+    stage = 'character-protagonist';
+  } else if (!chars.hasRelationships && chars.antagonistCount === 0) {
+    // Suggest building antagonists first — but once a relationships graph exists
+    // we advance regardless of antagonist count (antagonist-less genres, e.g. 言情).
+    stage = 'character-antagonists';
+  } else if (!chars.hasRelationships) {
+    stage = 'character-relationships';
   } else if (!hasOutlineMaster) {
     stage = 'outline-master';
   } else if (volumeCount === 0) {
@@ -153,7 +184,7 @@ export async function detectStatus(root: string | null): Promise<StatusReport> {
     hasWorldview,
     hasPowers,
     hasCheatSystem,
-    hasCharIndex,
+    chars,
     hasOutlineMaster,
     volumeCount,
     chapterOutlineCount,
@@ -170,7 +201,7 @@ interface Counts {
   hasWorldview: boolean;
   hasPowers: boolean;
   hasCheatSystem: boolean;
-  hasCharIndex: boolean;
+  chars: CharactersStatus;
   hasOutlineMaster: boolean;
   volumeCount: number;
   chapterOutlineCount: number;
@@ -186,7 +217,10 @@ const STAGE_LABEL: Record<Stage, string> = {
   'world-powers': '建世界（powers 力量等级）',
   'world-cheat-system': '建世界（cheat-system 金手指）',
   'world-approve': '建世界（待 approve）',
-  characters: '角色人设',
+  'character-protagonist': '角色（主角）',
+  'character-antagonists': '角色（反派）',
+  'character-relationships': '角色（关系网）',
+  'character-approve': '角色（待 approve）',
   'outline-master': '总纲',
   'outline-volume': '卷纲',
   'outline-chapters': '章纲',
@@ -211,7 +245,11 @@ function buildDetails(novel: Novel, c: Counts): string[] {
       `力量等级：${c.hasPowers ? '✓' : '✗'}  ` +
       `金手指：${c.hasCheatSystem ? '✓' : '✗'}`,
   );
-  out.push(`角色索引：${c.hasCharIndex ? '✓' : '✗'}`);
+  out.push(
+    `角色：主角 ${c.chars.hasProtagonist ? '✓' : '✗'}  ` +
+      `反派 ${c.chars.antagonistCount}  配角 ${c.chars.supportingCount}  ` +
+      `关系网 ${c.chars.hasRelationships ? '✓' : '✗'}`,
+  );
   out.push(`总纲：${c.hasOutlineMaster ? '✓' : '✗'}`);
   out.push(`卷纲数：${c.volumeCount}  章纲数：${c.chapterOutlineCount}`);
   out.push(`已写章节数：${c.chapterCount}`);
@@ -273,8 +311,39 @@ function buildNextSteps(stage: Stage): NextStep[] {
           skill: 'novel-worldforge',
         },
       ];
-    case 'characters':
-      return [{ title: '设计角色（alpha-2b 实现）', skill: 'novel-character-atelier' }];
+    case 'character-protagonist':
+      return [
+        {
+          title: '捏主角 + 反派 + 配角 + 关系网',
+          command: 'novel character build',
+          skill: 'novel-character-atelier',
+        },
+      ];
+    case 'character-antagonists':
+      return [
+        {
+          title: '继续添加反派（前 30 章会出现的）',
+          command: 'novel character build --resume',
+          skill: 'novel-character-atelier',
+        },
+        { title: '或单独加一个反派', command: 'novel character add antagonist' },
+      ];
+    case 'character-relationships':
+      return [
+        {
+          title: '构建角色关系网',
+          command: 'novel character build --resume',
+          skill: 'novel-character-atelier',
+        },
+      ];
+    case 'character-approve':
+      return [
+        {
+          title: '校验并定稿角色卡',
+          command: 'novel character approve',
+          skill: 'novel-character-atelier',
+        },
+      ];
     case 'outline-master':
     case 'outline-volume':
     case 'outline-chapters':
