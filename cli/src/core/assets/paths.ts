@@ -39,7 +39,10 @@ export interface ProjectPaths {
     index: string;
     antagonists: string;
     supporting: string;
+    /** Markdown projection (human-readable relationship graph). */
     relationships: string;
+    /** JSON canonical source for the relationship graph. */
+    relationshipsJson: string;
   };
   chapters: {
     dir: string;
@@ -95,6 +98,7 @@ export function projectPaths(root: string): ProjectPaths {
       antagonists: join(r, 'characters', 'antagonists'),
       supporting: join(r, 'characters', 'supporting'),
       relationships: join(r, 'characters', 'relationships.md'),
+      relationshipsJson: join(r, 'characters', 'relationships.json'),
     },
     chapters: {
       dir: join(r, 'chapters'),
@@ -153,4 +157,55 @@ export function volumeFilename(n: number): string {
     throw new Error(`volume number must be positive integer, got ${n}`);
   }
   return `volume-${String(n).padStart(2, '0')}.md`;
+}
+
+/** Resolved paths for a single character card. */
+export interface CharacterCardPaths {
+  /** Absolute path to the canonical JSON. */
+  json: string;
+  /** Absolute path to the MD projection. */
+  md: string;
+  /** MD path relative to the characters/ dir (used in _index.json `file`). */
+  relFile: string;
+  /** Directory the card lives in. */
+  dir: string;
+}
+
+/**
+ * Resolve the {json, md, relFile, dir} paths for a character card.
+ *
+ * Layout (README "资产目录约定"):
+ *   protagonist → characters/protagonist-<slug>.{json,md}
+ *   antagonist  → characters/antagonists/antagonist-<slug>.{json,md}
+ *   supporting  → characters/supporting/supporting-<slug>.{json,md}
+ *   minor       → characters/supporting/minor-<slug>.{json,md}
+ *
+ * Uses a local literal union (not the CharacterRole schema type) to keep paths.ts
+ * free of schema imports.
+ */
+export function characterCardPaths(
+  root: string,
+  role: 'protagonist' | 'antagonist' | 'supporting' | 'minor',
+  slug: string,
+): CharacterCardPaths {
+  const charactersDir = join(resolve(root), 'characters');
+  const base = `${role}-${slug}`;
+  const { dir, relDir } = ((): { dir: string; relDir: string } => {
+    switch (role) {
+      case 'protagonist':
+        return { dir: charactersDir, relDir: '' };
+      case 'antagonist':
+        return { dir: join(charactersDir, 'antagonists'), relDir: 'antagonists' };
+      case 'supporting':
+      case 'minor':
+        return { dir: join(charactersDir, 'supporting'), relDir: 'supporting' };
+    }
+  })();
+  const relFile = relDir.length > 0 ? `${relDir}/${base}.md` : `${base}.md`;
+  return {
+    json: join(dir, `${base}.json`),
+    md: join(dir, `${base}.md`),
+    relFile,
+    dir,
+  };
 }

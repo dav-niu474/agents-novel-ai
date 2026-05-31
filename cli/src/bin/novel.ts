@@ -9,6 +9,7 @@
  *   novel config <op> ...   commands/config.ts
  *   novel blueprint <op>    commands/blueprint.ts
  *   novel world <op>        commands/world.ts
+ *   novel character <op>    commands/character.ts
  *
  * Errors:
  *   - NovelError → friendly chalk-red message + optional hint, exit code 1+
@@ -21,6 +22,13 @@ import {
   blueprintShow,
   blueprintStart,
 } from '../commands/blueprint.js';
+import {
+  characterAdd,
+  characterApprove,
+  characterBuild,
+  characterList,
+  characterShow,
+} from '../commands/character.js';
 import {
   configGet,
   configList,
@@ -37,13 +45,23 @@ import {
   worldShow,
 } from '../commands/world.js';
 import { NovelError } from '../core/utils/errors.js';
+import type { CharacterRole } from '../core/schemas/character.js';
 import { chalk, log } from '../core/utils/logger.js';
 
 // -------------------------------------------------------------------------
 // CLI version — keep in sync with package.json. Hardcoded to avoid runtime
 // JSON import quirks under NodeNext + ESM.
 // -------------------------------------------------------------------------
-const CLI_VERSION = '0.2.0-alpha.2';
+const CLI_VERSION = '0.2.0-alpha.3';
+
+/** Validate a `character add [role]` argument into a CharacterRole. */
+function parseRoleArg(role: string): CharacterRole {
+  const allowed = ['protagonist', 'antagonist', 'supporting', 'minor'] as const;
+  if ((allowed as readonly string[]).includes(role)) {
+    return role as CharacterRole;
+  }
+  throw new NovelError(`非法的 role：${role}（允许 ${allowed.join(' / ')}）`);
+}
 
 // -------------------------------------------------------------------------
 // Build the program
@@ -54,7 +72,7 @@ function buildProgram(): Command {
 
   program
     .name('novel')
-    .description('Novel Studio CLI — AI 全流程网文写作工作室（v2 alpha-2a）')
+    .description('Novel Studio CLI — AI 全流程网文写作工作室（v2 alpha-2b）')
     .version(CLI_VERSION, '-v, --version')
     .option('-q, --quiet', '抑制非关键输出')
     .option('--debug', '打开 debug 日志');
@@ -232,6 +250,63 @@ function buildProgram(): Command {
     .description('校验三件套（含 R2 强约束）+ 把三个 .md 的 status 翻成 approved')
     .action(async () => {
       await worldApprove();
+    });
+
+  // ---------- novel character ... ----------
+  const character = program
+    .command('character')
+    .description('角色 CRUD + 交互式 build 工作流（主角 / 反派 / 配角 + 关系网）');
+
+  character
+    .command('list')
+    .description('表格显示所有角色（按主角 / 反派 / 配角分组）+ 关系网状态')
+    .action(async () => {
+      await characterList();
+    });
+
+  character
+    .command('show [target]')
+    .description('打印角色卡；target 可选 <角色ID> / relationships / all（默认 all）')
+    .action(async (target: string | undefined) => {
+      await characterShow(target ?? 'all');
+    });
+
+  character
+    .command('build')
+    .description('启动捏角色工作流（主角 → 反派 → 配角 → 关系网，每步可选 LLM 起草 / 编辑器手填）')
+    .option('--resume', '只补还缺的（跳过已建主角 / 已有关系网）')
+    .option('--hint <text>', '初始想法 / 偏好（注入到每步 LLM prompt）')
+    .option('--no-llm', '完全不调用 LLM，编辑器模式手填')
+    .option('--mock-llm', '使用 mock provider（离线测试用）')
+    .action(async (cmdOpts) => {
+      await characterBuild({
+        ...(cmdOpts.resume !== undefined ? { resume: cmdOpts.resume } : {}),
+        ...(cmdOpts.hint !== undefined ? { hint: cmdOpts.hint } : {}),
+        ...(cmdOpts.llm === false ? { noLLM: true } : {}),
+        ...(cmdOpts.mockLlm !== undefined ? { mockLLM: cmdOpts.mockLlm } : {}),
+      });
+    });
+
+  character
+    .command('add [role]')
+    .description('增量添加单个角色；role 可选 protagonist / antagonist / supporting / minor')
+    .option('--hint <text>', '初始想法（注入到 LLM prompt）')
+    .option('--no-llm', '完全不调用 LLM，编辑器模式手填')
+    .option('--mock-llm', '使用 mock provider（离线测试用）')
+    .action(async (role: string | undefined, cmdOpts) => {
+      await characterAdd({
+        ...(role !== undefined ? { role: parseRoleArg(role) } : {}),
+        ...(cmdOpts.hint !== undefined ? { hint: cmdOpts.hint } : {}),
+        ...(cmdOpts.llm === false ? { noLLM: true } : {}),
+        ...(cmdOpts.mockLlm !== undefined ? { mockLLM: cmdOpts.mockLlm } : {}),
+      });
+    });
+
+  character
+    .command('approve')
+    .description('校验所有角色卡（R1/R3 强约束 + R2 软警告）+ 把卡片 status 翻成 approved')
+    .action(async () => {
+      await characterApprove();
     });
 
   return program;
