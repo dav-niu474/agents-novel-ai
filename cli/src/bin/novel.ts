@@ -9,6 +9,7 @@
  *   novel config <op> ...   commands/config.ts
  *   novel blueprint <op>    commands/blueprint.ts
  *   novel world <op>        commands/world.ts
+ *   novel outline <op>      commands/outline.ts
  *
  * Errors:
  *   - NovelError → friendly chalk-red message + optional hint, exit code 1+
@@ -29,6 +30,12 @@ import {
 } from '../commands/config.js';
 import { runDoctor } from '../commands/doctor.js';
 import { runInit } from '../commands/init.js';
+import {
+  outlineApprove,
+  outlineBuild,
+  outlineList,
+  outlineShow,
+} from '../commands/outline.js';
 import { runStatus } from '../commands/status.js';
 import {
   worldApprove,
@@ -43,7 +50,7 @@ import { chalk, log } from '../core/utils/logger.js';
 // CLI version — keep in sync with package.json. Hardcoded to avoid runtime
 // JSON import quirks under NodeNext + ESM.
 // -------------------------------------------------------------------------
-const CLI_VERSION = '0.2.0-alpha.2';
+const CLI_VERSION = '0.2.0-alpha.3';
 
 // -------------------------------------------------------------------------
 // Build the program
@@ -54,7 +61,7 @@ function buildProgram(): Command {
 
   program
     .name('novel')
-    .description('Novel Studio CLI — AI 全流程网文写作工作室（v2 alpha-2a）')
+    .description('Novel Studio CLI — AI 全流程网文写作工作室（v2 alpha-2c）')
     .version(CLI_VERSION, '-v, --version')
     .option('-q, --quiet', '抑制非关键输出')
     .option('--debug', '打开 debug 日志');
@@ -232,6 +239,54 @@ function buildProgram(): Command {
     .description('校验三件套（含 R2 强约束）+ 把三个 .md 的 status 翻成 approved')
     .action(async () => {
       await worldApprove();
+    });
+
+  // ---------- novel outline ... ----------
+  const outline = program
+    .command('outline')
+    .description('三级大纲 CRUD + 交互式 build 工作流（总纲 / 卷纲 / 章纲）');
+
+  outline
+    .command('show [target] [n]')
+    .description('打印大纲：target 可选 master / volume <n> / chapter <n> / all（默认 all）')
+    .action(async (target: string | undefined, n: string | undefined) => {
+      await outlineShow(target ?? 'all', n);
+    });
+
+  outline
+    .command('list')
+    .description('紧凑表格显示总纲 / 卷纲 / 章纲的存在性 + status + version + 完整度')
+    .action(async () => {
+      await outlineList();
+    });
+
+  outline
+    .command('build')
+    .description('启动三级大纲工作流（总纲 → 卷纲 → 前 N 章章纲，每步可选 LLM 起草 / 编辑器 / 跳过）')
+    .option('--resume', '只填还缺或仍不完整的大纲资产')
+    .option('--volume <n>', '为第 n 卷写卷纲 + 章纲（默认 1）', (v) => Number.parseInt(v, 10))
+    .option('--chapters <count>', '本次产出多少章章纲（默认 5）', (v) => Number.parseInt(v, 10))
+    .option('--range <a-b>', '本卷章节范围（如 1-50），跳过交互询问')
+    .option('--hint <text>', '初始想法 / 偏好（注入到每步的 LLM prompt）')
+    .option('--no-llm', '完全不调用 LLM，编辑器模式手写')
+    .option('--mock-llm', '使用 mock provider（离线测试用）')
+    .action(async (cmdOpts) => {
+      await outlineBuild({
+        ...(cmdOpts.resume !== undefined ? { resume: cmdOpts.resume } : {}),
+        ...(cmdOpts.volume !== undefined && !Number.isNaN(cmdOpts.volume) ? { volume: cmdOpts.volume } : {}),
+        ...(cmdOpts.chapters !== undefined && !Number.isNaN(cmdOpts.chapters) ? { chapters: cmdOpts.chapters } : {}),
+        ...(cmdOpts.range !== undefined ? { range: cmdOpts.range } : {}),
+        ...(cmdOpts.hint !== undefined ? { hint: cmdOpts.hint } : {}),
+        ...(cmdOpts.llm === false ? { noLLM: true } : {}),
+        ...(cmdOpts.mockLlm !== undefined ? { mockLLM: cmdOpts.mockLlm } : {}),
+      });
+    });
+
+  outline
+    .command('approve [target] [n]')
+    .description('校验完整度后把大纲 status 翻成 approved（章纲强制 R1 九字段）；不带 target 则批量 approve 所有完整资产')
+    .action(async (target: string | undefined, n: string | undefined) => {
+      await outlineApprove(target ?? 'all', n);
     });
 
   return program;

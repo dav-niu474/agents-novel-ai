@@ -276,9 +276,29 @@ function buildNextSteps(stage: Stage): NextStep[] {
     case 'characters':
       return [{ title: '设计角色（alpha-2b 实现）', skill: 'novel-character-atelier' }];
     case 'outline-master':
+      return [
+        {
+          title: '写总纲（master）',
+          command: 'novel outline build',
+          skill: 'novel-outline-architect',
+        },
+      ];
     case 'outline-volume':
+      return [
+        {
+          title: '写第 1 卷卷纲',
+          command: 'novel outline build --resume',
+          skill: 'novel-outline-architect',
+        },
+      ];
     case 'outline-chapters':
-      return [{ title: '写大纲 / 章纲（alpha-2c 实现）', skill: 'novel-outline-architect' }];
+      return [
+        {
+          title: '写前 5-10 章章纲',
+          command: 'novel outline build --resume',
+          skill: 'novel-outline-architect',
+        },
+      ];
     case 'writing':
       return [{ title: '写下一章（alpha-2d 实现）', skill: 'novel-chapter-writer' }];
     case 'completed':

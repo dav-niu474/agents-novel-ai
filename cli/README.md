@@ -1,6 +1,6 @@
 # Novel Studio CLI
 
-> v2 alpha-2a — AI 全流程网文写作 Studio 的命令行版。
+> v2 alpha-2c — AI 全流程网文写作 Studio 的命令行版。
 
 ## 安装
 
@@ -11,7 +11,7 @@ npm run build
 npm link    # 暴露全局 `novel` 命令；或直接用 `npm run novel -- <subcommand>`
 ```
 
-## 当前版本（alpha-2a）能做什么
+## 当前版本（alpha-2c）能做什么
 
 ### 离线命令（无需 LLM）
 
@@ -46,6 +46,30 @@ blueprint approved  →  worldview      ← era / 时间线 / 势力 / 物理规
 
 每个资产都是 **JSON canonical + MD projection 双写**：JSON 是真相，MD 是给人看的渲染版本。
 
+### 三级大纲（outline-architect）— alpha-2c 新增
+
+- `novel outline list` — 紧凑表格显示总纲 / 卷纲 / 章纲的存在性 + status + version + 完整度
+- `novel outline show [master | volume <n> | chapter <n> | all]` — 打印某一级大纲内容
+- `novel outline build [--resume] [--volume <n>] [--chapters <count>] [--range <a-b>]` — 启动三级大纲工作流（总纲 → 卷纲 → 前 N 章章纲，每步可选 LLM 起草 / 编辑器 / 跳过）
+- `novel outline approve [master | volume <n> | chapter <n>]` — 完整度校验后翻 status=approved；不带 target 则批量 approve 所有完整资产
+
+#### 三级大纲依赖关系
+
+```
+world approved  →  outline/master.md           ← 主题驱动 / 主线 N 幕 / 卷列表 / 长期伏笔
+                   ↓
+                   outline/volumes/volume-NN.md ← 卷主题 / 卷高潮 / 5 段式 / 必出桥段 / 卷末钩子
+                   ↓
+                   outline/chapters/chapter-NNNN.md ← 章纲 9 字段契约（R1）；chapter-writer 的唯一直接输入
+```
+
+> ⚠️ 与 world 不同，**大纲是 Markdown-canonical 单写**（无 JSON sidecar，见 `01-asset-model.md` §1）：
+> Markdown 正文是真相，逐字保存；只有 YAML frontmatter 走 Zod 强校验。
+> 章纲的 9 字段（R1）通过"按编号 1-9 解析二级标题"做完整度判定，`approve` 时强制全填。
+>
+> 角色索引（`characters/_index.json`，alpha-2b）目前是**软依赖**：缺失只警告不阻塞——
+> 章纲里的"必出场角色"以角色 ID 文本引用，等 alpha-2b 落地后可补建索引。
+
 ## 架构
 
 ```
@@ -54,17 +78,21 @@ src/
 ├── commands/                # 每条子命令一个文件
 ├── workflows/               # 多步交互流程
 │   ├── blueprint-flow.ts    # 10 步开书定盘
-│   └── world-flow.ts        # 3 步建世界（worldview → powers → cheat-system）
+│   ├── world-flow.ts        # 3 步建世界（worldview → powers → cheat-system）
+│   └── outline-flow.ts      # 3 步建大纲（master → volume → 前 N 章 chapter）
 └── core/
     ├── schemas/             # Zod schemas
     │   ├── common.ts        # AssetType / SkillName / ID / 时间戳
     │   ├── novel.ts         # novel.json
     │   ├── blueprint.ts     # blueprint.md frontmatter + 10 sections
     │   ├── world.ts         # worldview / powers / cheat-system + R2 helper
+    │   ├── outline.ts       # outline master/volume/chapter frontmatter + 9 字段常量
     │   └── skill.ts         # SKILL.md frontmatter
     ├── assets/              # 资产 IO（路径约定、frontmatter 解析、原子写入、scaffold）
     │   ├── world.ts         # JSON canonical + MD projection 双写
-    │   └── world-render.ts  # 从结构化 data 渲染 MD body
+    │   ├── world-render.ts  # 从结构化 data 渲染 MD body
+    │   ├── outline.ts       # Markdown-canonical（逐字保存）+ 9 字段完整度分析
+    │   └── outline-render.ts# 大纲占位骨架生成
     ├── status/              # 项目阶段判定
     ├── skills/              # 加载并编译 SKILL.md（v1 SKILL 仍是 source of truth）
     ├── llm/                 # provider 抽象（OpenAI / Anthropic / mock）
@@ -124,12 +152,17 @@ novel world build
 novel world show
 novel world approve     # R2 校验 + 翻 status=approved
 
-# 4. 看进度
-novel status            # 应显示 stage='characters'，等 alpha-2b 接力
+# 4. 写三级大纲（总纲 → 卷纲 → 前 5 章章纲）
+novel outline build               # --range 1-50 可跳过卷范围询问
+novel outline list                # 看完整度（章纲 R1 = 9/9）
+novel outline approve chapter 1   # 章纲 9 字段齐全才能 approve
+
+# 5. 看进度
+novel status            # alpha-2b（character）尚未实现 CLI；大纲不强依赖它
 
 # 离线 / 不消耗 token 的场景
-novel world build --mock-llm    # 用 mock provider，验证流程不调真 API
-novel world build --no-llm      # 完全不调 LLM，只走编辑器手填模式
+novel outline build --mock-llm    # 用 mock provider，验证流程不调真 API
+novel outline build --no-llm      # 完全不调 LLM，只走编辑器手写模式
 ```
 
 ## 开发
@@ -145,7 +178,7 @@ npm run test                       # vitest（单 run 模式）
 详见 `../docs/roadmap.md`。
 
 - **alpha-1**（已完成）：init / status / doctor / config / blueprint
-- **alpha-2a**（本版本）：world（worldview / powers / cheat-system）
-- **alpha-2b**（下一步）：character（protagonist / antagonists / supporting + relationships）
-- **alpha-2c**：outline（master / volume / chapter outline）
+- **alpha-2a**（已完成）：world（worldview / powers / cheat-system）
+- **alpha-2c**（本版本）：outline（master / volume / chapter 三级大纲，Markdown-canonical + 章纲 R1 九字段）
+- **alpha-2b**（待补）：character（protagonist / antagonists / supporting + relationships）—— outline 当前以软依赖处理角色索引
 - **alpha-2d**：单章六阶段循环（plan → compose → write → audit → revise → settle）+ memory delta apply + C1-C9 校验
