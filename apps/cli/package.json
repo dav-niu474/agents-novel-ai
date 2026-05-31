@@ -1,0 +1,38 @@
+{
+  "name": "@novel-studio/cli",
+  "version": "0.2.0-alpha.3",
+  "description": "Novel Studio CLI — AI-powered Chinese web novel writing pipeline. v2 alpha-2b: + character-atelier (protagonist / antagonists / supporting + relationships); alpha-2c: + outline-architect (master / volume / chapter 三级大纲). Depends on @novel/core.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "novel": "./dist/bin/novel.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/post-build.mjs",
+    "dev": "tsx src/bin/novel.ts",
+    "novel": "tsx src/bin/novel.ts",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7.2.0",
+    "@novel/core": "workspace:*",
+    "commander": "^12.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

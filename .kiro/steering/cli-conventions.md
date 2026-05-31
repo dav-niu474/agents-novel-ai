@@ -2,9 +2,11 @@
 inclusion: always
 ---
 
-# CLI Conventions (cli/ subtree)
+# Monorepo / CLI Conventions
 
-工程层面的约束。仅适用于 `cli/` 子目录的 TypeScript 代码；不影响 `skills/` 与 `docs/`。
+工程层面的约束。适用于 `packages/core`（`@novel/core`）与 `apps/cli` 的 TypeScript 代码；不影响 `skills/` 与 `docs/`。
+
+> 仓库已是 pnpm workspace：`packages/core`（运行时无关内核：schemas / assets / llm / skills / status / config / utils）+ `apps/cli`（命令行展示层：bin / commands / workflows）+ 将来的 `apps/web`。下文出现的 `core/<x>` 指 `packages/core/src/<x>`；`apps/cli` 通过**子路径导出**消费它：`import ... from '@novel/core/<x>/<file>.js'`。
 
 ## 关键设计原则
 
@@ -58,25 +60,27 @@ runInit({
 ## 模块组织
 
 ```
-src/
-├── bin/novel.ts              # 唯一 CLI 入口，所有 commander 注册都在这
-├── commands/<verb>.ts        # 一条子命令一个文件，export run<Verb>
-├── workflows/<flow>.ts       # 多步交互流程；commands 调用它
-└── core/
-    ├── schemas/              # 所有 Zod schemas
-    ├── assets/               # 资产 IO（路径约定 / frontmatter / atomic 写）
-    ├── status/               # 项目阶段判定
-    ├── skills/               # SKILL.md 加载与 prompt 编译
-    ├── llm/                  # provider 抽象 + OpenAI / Anthropic / mock
-    ├── config/               # global + project 配置
-    └── utils/                # id / time / logger / errors / fs / zod-format
+packages/core/src/           # @novel/core（运行时无关，CLI 与 Web 共用）
+├── schemas/                 # 所有 Zod schemas
+├── assets/                  # 资产 IO（路径约定 / frontmatter / atomic 写）
+├── status/                  # 项目阶段判定
+├── skills/                  # SKILL.md 加载与 prompt 编译
+├── llm/                     # provider 抽象 + OpenAI / Anthropic / mock
+├── config/                  # global + project 配置
+└── utils/                   # id / time / logger / errors / fs / zod-format
+
+apps/cli/src/                # 命令行展示层（import @novel/core/...）
+├── bin/novel.ts             # 唯一 CLI 入口，所有 commander 注册都在这
+├── commands/<verb>.ts       # 一条子命令一个文件，export run<Verb>
+└── workflows/<flow>.ts      # 多步交互流程；commands 调用它
 ```
 
 横向依赖规则：
 
-- `commands/` → `workflows/` → `core/`（单向）
-- `core/` 内部任何模块不得 import `commands/` 或 `workflows/`
-- `core/<a>/` 可以 import `core/<b>/`，但不要循环
+- `apps/cli` 的 `commands/` → `workflows/` → `@novel/core`（单向）
+- `@novel/core` **不得** import `apps/cli`（commands / workflows / bin），也**不得**依赖 `commander` / `@inquirer/prompts`（保持运行时无关，让 Web 后端可复用）
+- `@novel/core` 内部 `<a>/` 可以 import `<b>/`，但不要循环
+- cli 引用 core 一律用子路径：`from '@novel/core/<sub>/<file>.js'`（不要相对路径跨包）
 
 ## TypeScript 规范
 
@@ -128,7 +132,7 @@ Zod schema 设计里有个反复出现的取舍：某个字段是用 `z.enum([..
 
 ## 测试
 
-- vitest，单 run 模式：`npm test`；watch：`npm run test:watch`。
+- vitest，单 run 模式：`pnpm --filter @novel-studio/cli test`（或在 `apps/cli` 内 `pnpm test`）；watch：`pnpm test:watch`。整仓构建：根目录 `pnpm -r build`（拓扑顺序，先 core 后 cli）。
 - 不要在测试里调用真实 LLM。需要 LLM 时用 `MockProvider` + `enqueue(...)` 喂 canned response。
 - 每个测试用 `makeTmpDir` / `rmTmpDir` 隔离文件系统。绝不在 `os.tmpdir()` 之外写测试文件。
 - `setSkillsDir(null)` 重置 skills 加载缓存（在用 NOVEL_SKILLS_DIR 切换的测试里必须）。
