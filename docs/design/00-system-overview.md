@@ -220,4 +220,5 @@ inkos 在 0.6.0 之后做了同样的事：truth file 的权威源是 JSON，Mar
 - Pipeline 编排：[`02-pipeline-architecture.md`](./02-pipeline-architecture.md)
 - 长期记忆与素材沉淀：[`03-memory-and-vault.md`](./03-memory-and-vault.md)
 - Skill 规范：[`04-skill-spec.md`](./04-skill-spec.md)
+- Web Studio（v3）：[`05-web-studio.md`](./05-web-studio.md)
 - 演进路线：[`../roadmap.md`](../roadmap.md)
