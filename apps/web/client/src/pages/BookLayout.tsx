@@ -6,6 +6,7 @@ const SECTIONS: { to: string; label: string; end?: boolean }[] = [
   { to: 'world', label: '世界三件套' },
   { to: 'characters', label: '角色' },
   { to: 'outline', label: '大纲' },
+  { to: 'build/world', label: '▶ 建世界' },
 ];
 
 const FUTURE = ['章节', '审稿', '记忆', '素材库'];
