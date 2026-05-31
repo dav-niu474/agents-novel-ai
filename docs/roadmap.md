@@ -65,6 +65,8 @@
 
 #### v2.1 基础 CLI（`novel`）
 
+> **实现进度**：alpha-1（init / status / doctor / config / blueprint）✅ · alpha-2a（world：worldview / powers / cheat-system）✅ · **alpha-2b（character：主角 / 反派 / 配角 + 关系网）✅** · alpha-2c（outline）⏳ · alpha-2d（单章六阶段 + memory delta + C1-C9）⏳。详见 `cli/README.md`。
+
 ```bash
 novel init <name>                       # 初始化项目
 novel status [book-id]                  # 查看项目状态

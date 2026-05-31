@@ -16,8 +16,7 @@
  * 与 blueprint workflow 的核心差异：blueprint 是 10 段自由文本，逐步收集；
  * world 是结构化嵌套数据，整体生成 + 编辑更高效。
  */
-import { confirm, editor, select } from '@inquirer/prompts';
-import type { ZodType } from 'zod';
+import { confirm, select } from '@inquirer/prompts';
 import { readBlueprint } from '../core/assets/blueprint.js';
 import { readNovel } from '../core/assets/novel.js';
 import { findProjectRoot } from '../core/assets/paths.js';
@@ -54,8 +53,8 @@ import { compileSystemPrompt } from '../core/skills/compiler.js';
 import { loadSkill } from '../core/skills/loader.js';
 import { NotInProjectError, NovelError } from '../core/utils/errors.js';
 import { nowISO } from '../core/utils/time.js';
-import { formatZodError } from '../core/utils/zod-format.js';
 import { chalk, log } from '../core/utils/logger.js';
+import { collectAssetData, type CollectMode } from './json-collect.js';
 
 // =============================================================================
 //  Public entry
@@ -148,7 +147,8 @@ interface StepCtx {
   systemPrompt: string;
 }
 
-type Mode = 'llm-draft' | 'editor' | 'skip' | 'keep';
+/** Local alias of the shared collector mode (kept for readable call sites). */
+type Mode = CollectMode;
 
 async function chooseMode(
   assetLabel: string,
@@ -534,130 +534,6 @@ ${CHEAT_SYSTEM_EXAMPLE_JSON}`;
 }
 
 // =============================================================================
-//  Generic asset-data collector (LLM or editor mode)
-// =============================================================================
-
-interface CollectArgs<T> {
-  mode: Mode;
-  provider: LLMProvider | null;
-  systemPrompt: string;
-  userPrompt: string;
-  schema: ZodType<T>;
-  currentJson: string;
-  assetLabel: string;
-}
-
-async function collectAssetData<T>(args: CollectArgs<T>): Promise<T | null> {
-  if (args.mode === 'editor') {
-    return collectViaEditor(args);
-  }
-  if (args.mode === 'llm-draft') {
-    if (!args.provider) {
-      log.warn('LLM provider 不可用，回退到 editor 模式');
-      return collectViaEditor(args);
-    }
-    return collectViaLLM({ ...args, provider: args.provider });
-  }
-  return null;
-}
-
-async function collectViaEditor<T>(args: CollectArgs<T>): Promise<T | null> {
-  let attempt = 0;
-  let draft = args.currentJson;
-  while (attempt < 3) {
-    attempt++;
-    const text = await editor({
-      message: `编辑 ${args.assetLabel}（保存退出后会校验 schema）`,
-      default: draft,
-      postfix: '.json',
-    });
-    const parsed = tryParseJson(text);
-    if (parsed === null) {
-      log.warn('JSON 解析失败，请检查语法。');
-      const retry = await confirm({ message: '再编辑一次？', default: true });
-      if (!retry) return null;
-      draft = text; // keep their attempt for re-edit
-      continue;
-    }
-    const result = args.schema.safeParse(parsed);
-    if (!result.success) {
-      log.warn(`Schema 校验失败：\n${formatZodError(result.error)}`);
-      const retry = await confirm({ message: '再编辑一次？', default: true });
-      if (!retry) return null;
-      draft = text;
-      continue;
-    }
-    return result.data;
-  }
-  log.error('连续 3 次校验失败，放弃这一步。');
-  return null;
-}
-
-async function collectViaLLM<T>(args: CollectArgs<T> & { provider: LLMProvider }): Promise<T | null> {
-  let attempt = 0;
-  while (attempt < 3) {
-    attempt++;
-    const spinner = log.spinner(`询问 ${args.provider.name}/${args.provider.model}（第 ${attempt} 次）...`).start();
-    let response: string;
-    try {
-      const res = await args.provider.chat(
-        [
-          { role: 'system', content: args.systemPrompt },
-          { role: 'user', content: args.userPrompt },
-        ],
-        { temperature: 0.7, maxTokens: 4096 },
-      );
-      response = res.content;
-      spinner.stop();
-    } catch (err) {
-      spinner.fail('LLM 调用失败');
-      log.error(`LLM 错误：${(err as Error).message}`);
-      const retry = await confirm({ message: '再试一次？', default: true });
-      if (!retry) return null;
-      continue;
-    }
-
-    const parsed = extractJsonFromLLMResponse(response);
-    if (parsed === null) {
-      log.warn('LLM 响应里找不到合法 JSON。原始片段：');
-      log.plain(chalk.dim(response.slice(0, 400)));
-      const choice = await select<'retry' | 'editor' | 'cancel'>({
-        message: '怎么办？',
-        choices: [
-          { value: 'retry', name: '让 LLM 再生成一次' },
-          { value: 'editor', name: '直接打开编辑器手填' },
-          { value: 'cancel', name: '退出这一步' },
-        ],
-      });
-      if (choice === 'retry') continue;
-      if (choice === 'editor') return collectViaEditor(args);
-      return null;
-    }
-
-    const result = args.schema.safeParse(parsed);
-    if (!result.success) {
-      log.warn(`LLM 输出 schema 校验失败：\n${formatZodError(result.error)}`);
-      const choice = await select<'retry' | 'editor' | 'cancel'>({
-        message: '怎么办？',
-        choices: [
-          { value: 'retry', name: '让 LLM 重新生成（可能修好）' },
-          { value: 'editor', name: '把当前输出导入编辑器手动修' },
-          { value: 'cancel', name: '退出这一步' },
-        ],
-      });
-      if (choice === 'retry') continue;
-      if (choice === 'editor') {
-        return collectViaEditor({ ...args, currentJson: JSON.stringify(parsed, null, 2) });
-      }
-      return null;
-    }
-    return result.data;
-  }
-  log.error('连续 3 次 LLM 输出都不合格，放弃这一步。');
-  return null;
-}
-
-// =============================================================================
 //  Helpers
 // =============================================================================
 
@@ -677,40 +553,6 @@ function countByStance(factions: ReadonlyArray<{ stance: string }>): string {
     .join(', ');
 }
 
-function tryParseJson(text: string): unknown {
-  try {
-    return JSON.parse(text);
-  } catch {
-    return null;
-  }
-}
-
-/** Extract a JSON object/array from an LLM response that may contain prose / fences. */
-function extractJsonFromLLMResponse(text: string): unknown {
-  const trimmed = text.trim();
-  // Direct
-  const direct = tryParseJson(trimmed);
-  if (direct !== null) return direct;
-
-  // Markdown fence
-  const fence = trimmed.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
-  if (fence) {
-    const fenced = tryParseJson(fence[1]!);
-    if (fenced !== null) return fenced;
-  }
-
-  // First { ... last }
-  const start = trimmed.indexOf('{');
-  const end = trimmed.lastIndexOf('}');
-  if (start >= 0 && end > start) {
-    const slice = trimmed.slice(start, end + 1);
-    const obj = tryParseJson(slice);
-    if (obj !== null) return obj;
-  }
-
-  return null;
-}
-
 /** Local R2 check (mirrors core/schemas/world.ts:checkCheatSystemR2 but inline). */
 function checkR2Local(data: CheatSystemData): string[] {
   if (data.not_applicable) return [];
@@ -725,9 +567,6 @@ function checkR2Local(data: CheatSystemData): string[] {
   }
   return [];
 }
-
-// Suppress unused variable warning — kept for future expansion
-// (currently no inline use; type imports are kept for the strict prompt mode soon).
 
 // =============================================================================
 //  Schema reference templates (embedded in LLM prompts as examples)

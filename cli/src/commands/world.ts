@@ -161,7 +161,7 @@ export async function worldList(): Promise<void> {
   const ws = worldStatus(root);
   log.plain('');
   if (ws.allPresent) {
-    log.success('三件套齐全。可以进入 character-atelier 阶段（alpha-2b 实现）。');
+    log.success('三件套齐全。运行 `novel character build` 进入角色阶段。');
   } else {
     log.hint(`已建 ${ws.count}/3。运行 \`novel world build${ws.count > 0 ? ' --resume' : ''}\` 继续。`);
   }
@@ -220,5 +220,5 @@ export async function worldApprove(): Promise<void> {
   await writeCheatSystem(root, cs, 'approved');
 
   log.success('worldview / powers / cheat-system 已全部标记 approved');
-  log.hint('下一步：设计角色（alpha-2b 实现 `novel character ...`）');
+  log.hint('下一步：设计角色（`novel character build`）');
 }

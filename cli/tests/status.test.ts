@@ -1,6 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { writeFile } from 'node:fs/promises';
 import { buildInitialBlueprint, writeBlueprint } from '../src/core/assets/blueprint.js';
+import {
+  buildInitialCharacter,
+  buildInitialRelationships,
+  registerCharacterInIndex,
+  writeCharacter,
+  writeRelationships,
+} from '../src/core/assets/character.js';
 import { buildInitialNovel } from '../src/core/assets/novel.js';
 import { projectPaths } from '../src/core/assets/paths.js';
 import { scaffoldProject } from '../src/core/assets/scaffold.js';
@@ -109,13 +116,51 @@ describe('status detector', () => {
     r = await detectStatus(dir);
     expect(r.stage).toBe('world-cheat-system');
 
-    // After all 3 world assets — proceeds to characters stage.
+    // After all 3 world assets — proceeds to the character stage (protagonist).
     await writeCheatSystem(dir, buildInitialCheatSystem());
     r = await detectStatus(dir);
-    expect(r.stage).toBe('characters');
+    expect(r.stage).toBe('character-protagonist');
   });
 
-  it('progresses through outline-master / outline-volume after world done', async () => {
+  it('progresses through character substages: protagonist → antagonists → relationships', async () => {
+    const novel = buildInitialNovel({
+      title: '测试',
+      genre: ['xuanhuan'],
+      platform_target: ['qidian'],
+    });
+    await scaffoldProject({ root: dir, novel });
+    await writeBlueprint(dir, approvedBlueprint('测试'));
+    await writeWorldview(dir, buildInitialWorldview());
+    await writePowers(dir, buildInitialPowers());
+    await writeCheatSystem(dir, buildInitialCheatSystem());
+
+    // No characters yet → protagonist substage.
+    let r = await detectStatus(dir);
+    expect(r.stage).toBe('character-protagonist');
+
+    // + protagonist → antagonists substage.
+    await registerCharacterInIndex(
+      dir,
+      await writeCharacter(dir, buildInitialCharacter('protagonist', 'protagonist', '主角', 'hero')),
+    );
+    r = await detectStatus(dir);
+    expect(r.stage).toBe('character-antagonists');
+
+    // + an antagonist → relationships substage.
+    await registerCharacterInIndex(
+      dir,
+      await writeCharacter(dir, buildInitialCharacter('antagonist', 'early', '反派', 'villain')),
+    );
+    r = await detectStatus(dir);
+    expect(r.stage).toBe('character-relationships');
+
+    // + relationships → moves on to outline-master.
+    await writeRelationships(dir, buildInitialRelationships());
+    r = await detectStatus(dir);
+    expect(r.stage).toBe('outline-master');
+  });
+
+  it('progresses through outline-master / outline-volume after characters done', async () => {
     const novel = buildInitialNovel({
       title: '测试',
       genre: ['xuanhuan'],
@@ -129,8 +174,18 @@ describe('status detector', () => {
     await writePowers(dir, buildInitialPowers());
     await writeCheatSystem(dir, buildInitialCheatSystem());
 
+    // Characters: protagonist + antagonist + relationships → character stage done.
+    await registerCharacterInIndex(
+      dir,
+      await writeCharacter(dir, buildInitialCharacter('protagonist', 'protagonist', '主角', 'hero')),
+    );
+    await registerCharacterInIndex(
+      dir,
+      await writeCharacter(dir, buildInitialCharacter('antagonist', 'early', '反派', 'villain')),
+    );
+    await writeRelationships(dir, buildInitialRelationships());
+
     const p = projectPaths(dir);
-    await writeFile(p.characters.index, '{}', 'utf8');
 
     let r = await detectStatus(dir);
     expect(r.stage).toBe('outline-master');
