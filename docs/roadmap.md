@@ -65,7 +65,7 @@
 
 #### v2.1 基础 CLI（`novel`）
 
-> **实现进度**：alpha-1（init / status / doctor / config / blueprint）✅ · alpha-2a（world：worldview / powers / cheat-system）✅ · **alpha-2b（character：主角 / 反派 / 配角 + 关系网）✅** · alpha-2c（outline）⏳ · alpha-2d（单章六阶段 + memory delta + C1-C9）⏳。详见 `cli/README.md`。
+> **实现进度**：alpha-1（init / status / doctor / config / blueprint）✅ · alpha-2a（world：worldview / powers / cheat-system）✅ · alpha-2b（character：主角 / 反派 / 配角 + 关系网）✅ · **alpha-2c（outline：总纲 / 卷纲 / 章纲）✅** · alpha-2d（单章六阶段 + memory delta + C1-C9）⏳。详见 `cli/README.md`。
 
 ```bash
 novel init <name>                       # 初始化项目
@@ -165,6 +165,8 @@ projectMarkdown(newState);
 ---
 
 ## v3：Web Studio
+
+> 详细架构设计见 [`design/05-web-studio.md`](design/05-web-studio.md)（本地优先、复用 `@novel/core`、文件兼容；MVP = 设定圣经上 Web）。
 
 ### 目标
 做一个本地 Web UI（默认端口 4567），让用户在浏览器里管理书 / 写章 / 审稿 / 看雷达，相当于 inkos Studio + AI-Novel-Writing-Assistant Creative Hub 的结合。
